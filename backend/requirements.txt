@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-multipart
+soundfile
+numpy
+transformers
+torch
+
+# torch is CPU-only. Install it explicitly with:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+# then install the rest of this file.
