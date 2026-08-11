@@ -1,4 +1,4 @@
-import type { CompressResult, SessionPayload } from "./types";
+import type { CompressResult, SessionPayload, VoiceSession, VoiceStatus } from "./types";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
@@ -41,4 +41,16 @@ export function compose(message: string, wordBudget: number) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, wordBudget }),
   }).then(unwrap<CompressResult>);
+}
+
+export function voiceStatus() {
+  return fetch(`${API_BASE}/api/voice/status`).then(unwrap<VoiceStatus>);
+}
+
+export function createVoiceSession(eventId: number | null) {
+  return fetch(`${API_BASE}/api/voice/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventId }),
+  }).then(unwrap<VoiceSession>);
 }

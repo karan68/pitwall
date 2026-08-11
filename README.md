@@ -128,9 +128,39 @@ A signal-quality gate (SNR, clipping, duration, voiced content) blocks scoring o
 cannot support a conclusion. Correlations are suppressed below five radio calls. Every reading
 carries a confidence level and the reason for it.
 
+### 8. Hands-free, because that is the actual problem
+
+The brief's premise is that engineers miss what is in a driver's voice *because their eyes are
+on the data*. Another dashboard does not fix that — it adds another screen. So the reading is
+also available by voice, through an **OmniDimension** agent:
+
+- The engineer presses **Talk to pit wall** and asks out loud: *"How is the driver?"*,
+  *"Can I talk to him?"*, *"What should I say?"*, *"Why do you think that?"*
+- The agent is briefed **server-side** on the radio call currently selected, using OmniDimension's
+  `custom_variables`. Those are set at session creation and cannot be tampered with from the
+  browser, so the agent can only report what was actually measured.
+- Its prompt instructs it to answer with radio discipline — numbers first, one or two sentences —
+  and to say it does not have something rather than invent it. It is explicitly told never to
+  claim emotion detection, only measured vocal load against a personal baseline.
+
+Architecture: the API key never leaves the backend. `POST /api/voice/session` mints a
+single-use `ws_url` that expires in 15 minutes; the browser receives only that, and
+`@omnidim-ai/client` handles microphone capture, playback, barge-in and transcripts.
+
 ---
 
 ## Running it
+
+**Voice agent (optional).** Copy `backend/.env.example` to `backend/.env` and add an
+OmniDimension API key:
+
+```
+OMNIDIM_API_KEY=your_key_here
+```
+
+`backend/.env` is gitignored — never commit a key. Without it everything still works; the
+voice panel simply reports "not configured". The PITWALL agent is created automatically on
+first use and its id cached in `backend/data/omnidim_agent.json`.
 
 **Backend** (http://localhost:8000)
 
@@ -155,6 +185,13 @@ for a team that guards its data.
 ```powershell
 cd backend
 .venv\Scripts\python.exe verify_features.py
+```
+
+**Verify the voice path** — creates/reuses the agent, mints a real session, prints the briefing
+the agent receives (never the key or the full token):
+
+```powershell
+.venv\Scripts\python.exe verify_voice.py
 ```
 
 **Load a demo stint** from a folder of clips. Files named `baseline*` calibrate the driver,
@@ -202,6 +239,12 @@ Model names are constants at the top of each service and swap without touching a
 `whisper-small.en` is a drop-in accuracy upgrade if CPU time allows — `base.en` currently
 mis-hears "braking points" as "breaking points".
 
+## Voice partner
+
+| Service | Role |
+|---|---|
+| OmniDimension | Hands-free race-engineer agent, grounded in the live reading via server-set session variables |
+
 ---
 
 ## Honest limitations
@@ -229,10 +272,13 @@ backend/
     transcribe.py            Whisper
     reference_model.py       the cross-check classifier
     audio_utils.py           decode + resample to 16 kHz mono
+    omnidim.py               OmniDimension agent + voice session minting
+    briefing.py              the live reading, flattened into speech
   verify_features.py         27-check verification harness
+  verify_voice.py            end-to-end check of the voice path
   seed_demo.py               load a stint from a folder of clips
   make_placeholder_clips.ps1 synthetic smoke-test audio
 frontend/src/
   App.tsx                    layout and session state
-  components/                status strip, quadrant, charts, advisor, console, log
+  components/                status strip, quadrant, charts, advisor, console, voice, log
 ```

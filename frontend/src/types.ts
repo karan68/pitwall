@@ -123,3 +123,17 @@ export interface CompressResult {
   removedWords: number;
   changed: boolean;
 }
+
+export interface VoiceStatus {
+  configured: boolean;
+  agentName: string;
+}
+
+export interface VoiceSession {
+  sessionId: number;
+  wsUrl: string;
+  expiresAt: string;
+  agentId: number;
+  briefedOn: string;
+  summary: string;
+}

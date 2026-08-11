@@ -3,13 +3,16 @@ import json
 import time
 from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from services import advisor, analytics, content, features, reference_model, state
-from services.audio_utils import load_audio
-from services.transcribe import transcribe
+load_dotenv(Path(__file__).parent / ".env")
+
+from services import advisor, analytics, briefing, content, features, omnidim, reference_model, state  # noqa: E402
+from services.audio_utils import load_audio  # noqa: E402
+from services.transcribe import transcribe  # noqa: E402
 
 STORE_PATH = Path(__file__).parent / "data" / "session.json"
 SEED_PATH = Path(__file__).parent / "data" / "seed_session.json"
@@ -153,3 +156,43 @@ class ComposeRequest(BaseModel):
 @app.post("/api/compose")
 def compose(request: ComposeRequest):
     return advisor.compress(request.message, max(3, request.wordBudget))
+
+
+def _current_briefing(event_id: int | None = None) -> dict:
+    store = _read_store()
+    payload = _session_payload(store)
+    events = store["events"]
+    selected = next((e for e in events if e["id"] == event_id), None) if event_id else None
+    return briefing.build(payload, selected or (events[-1] if events else None))
+
+
+@app.get("/api/voice/status")
+def voice_status():
+    """Whether the hands-free agent is available, without ever exposing the key."""
+    return {"configured": omnidim.is_configured(), "agentName": omnidim.AGENT_NAME}
+
+
+@app.get("/api/voice/brief")
+def voice_brief(eventId: int | None = None):
+    """The live reading in speech-ready form. Also the shape an external agent tool would call."""
+    variables = _current_briefing(eventId)
+    return {"variables": variables, "summary": briefing.spoken_summary(variables)}
+
+
+class VoiceSessionRequest(BaseModel):
+    eventId: int | None = None
+
+
+@app.post("/api/voice/session")
+def voice_session(request: VoiceSessionRequest | None = None):
+    """Mint a single-use browser voice session preloaded with the current reading."""
+    if not omnidim.is_configured():
+        raise HTTPException(503, "Voice agent not configured. Set OMNIDIM_API_KEY in backend/.env.")
+
+    variables = _current_briefing(request.eventId if request else None)
+    try:
+        session = omnidim.create_voice_session(variables)
+    except omnidim.OmniDimError as exc:
+        raise HTTPException(502, str(exc)) from exc
+
+    return {**session, "briefedOn": variables["lap"], "summary": briefing.spoken_summary(variables)}

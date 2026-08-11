@@ -9,6 +9,7 @@ import RadioLog from "./components/RadioLog";
 import ReferenceCompare from "./components/ReferenceCompare";
 import StateBreakdown from "./components/StateBreakdown";
 import StatusStrip from "./components/StatusStrip";
+import VoiceConsole from "./components/VoiceConsole";
 import type { RadioEvent, SessionPayload } from "./types";
 
 export default function App() {
@@ -116,6 +117,7 @@ export default function App() {
           {selected && <Transcript event={selected} />}
           {selected && <AdvisorPanel event={selected} />}
           <EngineerConsole event={selected} />
+          <VoiceConsole event={selected} />
         </div>
 
         <div className="flex flex-col gap-4">
