@@ -38,15 +38,23 @@ def session_context(manifest: dict, clips: list[dict]) -> dict:
     first = clips[0] if clips else {}
     number = first.get("racingNumber")
     name = DRIVER_NAMES.get(driver_id, driver_id)
+    real_laps = bool(manifest.get("laps"))
+    source = manifest.get("dataset", "unknown")
 
     return {
         "driver": f"{name}{f' #{number}' if number else ''}",
         "team": driver_id,
-        "stint": first.get("grandPrix", "Session"),
+        "stint": first.get("grandPrix") or source,
         "provenance": {
-            "audio": f"Real broadcast radio — Hugging Face {manifest.get('dataset')} (CC BY 4.0)",
-            "transcripts": "Whisper small.en running locally, scored against the dataset's human transcriptions",
-            "lapTimes": "Synthetic — illustrative only. This dataset carries no lap timing.",
+            "audio": f"Real broadcast radio — {source}",
+            "transcripts": "Whisper small.en running locally"
+            + (", scored against the dataset's human transcriptions" if first.get("groundTruth") else ""),
+            "lapTimes": (
+                f"Real — OpenF1 timing for this driver and session, "
+                f"reference pace {manifest.get('referenceLapSeconds')}s"
+                if real_laps
+                else "Synthetic — illustrative only. This dataset carries no lap timing."
+            ),
         },
     }
 
@@ -97,6 +105,15 @@ def main(folder: Path) -> None:
         client.post(f"{API}/api/baseline/reset")
         client.post(f"{API}/api/session/context", json=session_context(manifest, clips))
 
+        real_laps = manifest.get("laps")
+        if real_laps:
+            client.post(
+                f"{API}/api/session/laps",
+                json={"laps": real_laps, "referenceLapSeconds": manifest["referenceLapSeconds"]},
+            )
+            print(f"Loaded {len(real_laps)} real lap times, "
+                  f"reference pace {manifest['referenceLapSeconds']}s\n")
+
         print("Calibrating")
         for clip in baselines:
             response = client.post(
@@ -114,7 +131,9 @@ def main(folder: Path) -> None:
         errors, ref_words, scored = 0.0, 0, 0
         rows = []
         for index, clip in enumerate(calls):
-            lap = CALL_LAPS[index % len(CALL_LAPS)]
+            # A clip carrying its own lap came from OpenF1 and is on the lap it
+            # was actually transmitted during; otherwise space them out.
+            lap = clip.get("lap") or CALL_LAPS[index % len(CALL_LAPS)]
             response = client.post(
                 f"{API}/api/analyze",
                 files={"file": (clip["file"], (folder / clip["file"]).read_bytes(), "audio/wav")},

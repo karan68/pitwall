@@ -6,6 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 load_dotenv(Path(__file__).parent / ".env")
@@ -178,6 +179,23 @@ def set_session_context(context: SessionContext):
     return _session_payload(store)
 
 
+class LapSeries(BaseModel):
+    laps: list[dict]
+    referenceLapSeconds: float
+
+
+@app.post("/api/session/laps")
+def set_laps(series: LapSeries):
+    """Replace the lap series, e.g. with real timing pulled from OpenF1."""
+    store = _read_store()
+    store["laps"] = [
+        {"lap": lap["lap"], "timeSeconds": lap["timeSeconds"]} for lap in series.laps
+    ]
+    store["session"]["referenceLapSeconds"] = series.referenceLapSeconds
+    _write_store(store)
+    return _session_payload(store)
+
+
 class ComposeRequest(BaseModel):
     message: str
     wordBudget: int = 26
@@ -186,6 +204,13 @@ class ComposeRequest(BaseModel):
 @app.post("/api/compose")
 def compose(request: ComposeRequest):
     return advisor.compress(request.message, max(3, request.wordBudget))
+
+
+# Serve the built frontend when it exists, so one process on one port is the
+# whole application. Mounted last so it never shadows an /api route.
+FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
+if FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
 
 
 def _current_briefing(event_id: int | None = None) -> dict:

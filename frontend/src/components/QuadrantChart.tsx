@@ -83,7 +83,7 @@ export default function QuadrantChart({
             <Tooltip
               cursor={{ stroke: "#404040" }}
               contentStyle={{ background: "#0a0a0a", border: "1px solid #262626", borderRadius: 6, fontSize: 12 }}
-              formatter={(value: number, name: string) => [`${value}σ`, name]}
+              formatter={(value, name) => [`${value}σ`, String(name)]}
               labelFormatter={() => ""}
             />
             <Scatter data={points} shape={(props: unknown) => <Dot {...(props as DotProps)} />} />

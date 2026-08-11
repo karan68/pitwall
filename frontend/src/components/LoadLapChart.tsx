@@ -52,8 +52,10 @@ export default function LoadLapChart({ analytics, events }: { analytics: Analyti
             <Tooltip
               contentStyle={{ background: "#0a0a0a", border: "1px solid #262626", borderRadius: 6, fontSize: 12 }}
               labelFormatter={(lap) => `Lap ${lap}`}
-              formatter={(value: number, name: string) =>
-                name === "Lap time" ? [`${value.toFixed(1)}s`, name] : [value, name]
+              formatter={(value, name) =>
+                name === "Lap time"
+                  ? [`${Number(value).toFixed(1)}s`, String(name)]
+                  : [String(value), String(name)]
               }
             />
             <Area

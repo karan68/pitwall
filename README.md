@@ -151,6 +151,18 @@ single-use `ws_url` that expires in 15 minutes; the browser receives only that, 
 
 ## Running it
 
+### As one container (what a Hugging Face Space runs)
+
+```powershell
+docker build -t pitwall .
+docker run -p 7860:7860 pitwall
+```
+
+The image builds the frontend, then serves it from the API, so the whole application is one
+process on one port. For a Space, pick the Docker SDK and push the repository as-is.
+
+### For development (two processes)
+
 **Voice agent (optional).** Copy `backend/.env.example` to `backend/.env` and add an
 OmniDimension API key:
 
@@ -205,14 +217,14 @@ the rest are analysed as radio calls:
 
 ## Real data
 
-The system runs on **real Formula 1 team radio**, not synthesised stand-ins:
+The system runs on **real Formula 1 team radio**, from two sources that answer different questions.
 
-**Dataset:** [`MikCil/f1-team-radio`](https://huggingface.co/datasets/MikCil/f1-team-radio) — CC BY 4.0,
-public, not gated. One shard alone holds **2,937 clips across 26 drivers and 37 Grands Prix**,
-each with a human `transcription`.
+### Source 1 — Hugging Face, for measuring our own accuracy
 
-That ground-truth column is the point: it lets us **measure** our speech recognition on real
-broadcast audio instead of asserting that it works.
+[`MikCil/f1-team-radio`](https://huggingface.co/datasets/MikCil/f1-team-radio) — CC BY 4.0, public,
+not gated. One shard holds **2,937 clips across 26 drivers and 37 Grands Prix**, each with a human
+`transcription`. That ground-truth column is the point: it lets us **measure** our speech
+recognition rather than assert it.
 
 ```powershell
 cd backend
@@ -220,9 +232,22 @@ cd backend
 .venv\Scripts\python.exe run_stint.py sample_audio\real\LEWHAM01
 ```
 
-`load_real_radio.py` downloads a parquet shard, surveys the drivers, and exports clips plus a
-manifest carrying the ground truth. `run_stint.py` calibrates, analyses, and reports word error
-rate against it.
+### Source 2 — OpenF1, for real lap timing
+
+The Hugging Face dataset carries no lap times, so any correlation against it is illustrative.
+[OpenF1](https://openf1.org) publishes team radio **and** lap timing keyed to the same
+`session_key`, so a radio message can be placed on **the lap it was actually transmitted during**
+by comparing its timestamp to each lap's `date_start`. The correlation then stops being
+illustrative and becomes real.
+
+```powershell
+.venv\Scripts\python.exe load_openf1_stint.py --year 2024 --country Belgium
+.venv\Scripts\python.exe run_stint.py sample_audio\openf1\9574_81
+```
+
+Real timing is messy. Japan 2024 lap 2 reads **1714 seconds** — that is the red flag, not a lap.
+Laps more than 25% off the median are excluded from the reference pace but **kept in the series**,
+because they happened. On Spa 2024 the derived reference pace is 109.062s, which is a 1:49 lap.
 
 ### What running on real audio actually showed
 
@@ -254,6 +279,11 @@ better answer than a confident number.
 (*"Almost no voiced speech detected"*, *"Low speech-to-noise ratio (2.9 dB)"*) and flagged a
 further call. None of them should have been scored.
 
+**6. And on a stint where there is nothing to find, it says so.** Run against Piastri's Spa 2024
+radio with real lap timing, the verdict is *"No usable relationship in this stint (n=7 calls).
+Driver load is not explaining lap time here."* He was calm and quick; there was no stress-to-pace
+link to report. A tool that only ever finds a correlation is not measuring one.
+
 ### A limitation worth stating
 
 Many clips in this dataset contain **both the driver and the engineer** in one recording. Voice
@@ -278,9 +308,10 @@ have deliberately **not** been tuned to make synthetic audio pass.
 | `valhalla/distilbart-mnli-12-1` | Zero-shot radio intent classification |
 | `superb/wav2vec2-base-superb-er` | Reference emotion classifier, kept as an on-screen cross-check |
 
-| Dataset | Role |
+| Dataset / API | Role |
 |---|---|
 | `MikCil/f1-team-radio` | Real broadcast radio + human transcriptions for ASR scoring (CC BY 4.0) |
+| OpenF1 | Real team radio paired with real lap timing by session |
 
 Model names are constants at the top of each service and swap without touching anything else.
 `PITWALL_ASR_MODEL` overrides the ASR model without a code change.
@@ -297,8 +328,8 @@ Model names are constants at the top of each service and swap without touching a
 
 - Biomarkers are validated against synthetic signals of known properties, not against labelled
   driver-stress data. No such public dataset exists for race radio.
-- Lap times are **synthetic and illustrative**. The radio dataset carries no lap timing, and the
-  interface labels this under Data provenance rather than implying otherwise.
+- Lap times are real when the stint comes from OpenF1 and synthetic when it comes from the Hugging
+  Face dataset, which carries no timing. The interface states which under Data provenance.
 - Correlations from a single stint are indicative, not evidence. The interface says so.
 - Clips containing both driver and engineer are scored as one voice; there is no diarisation.
 - The reference emotion classifier is shown for contrast, not treated as ground truth. Neither
@@ -326,6 +357,7 @@ backend/
   verify_features.py         37-check verification harness
   verify_voice.py            end-to-end check of the voice path
   load_real_radio.py         pull real F1 radio from Hugging Face
+  load_openf1_stint.py       pull real radio + real lap timing from OpenF1
   run_stint.py               analyse a folder of clips, score ASR against ground truth
   seed_demo.py               load a stint from a folder of clips
   make_placeholder_clips.ps1 synthetic smoke-test audio

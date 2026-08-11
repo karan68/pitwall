@@ -1,11 +1,19 @@
 fastapi
 uvicorn[standard]
 python-multipart
+python-dotenv
+pydantic
 soundfile
 numpy
+scipy
+httpx
 transformers
-torch
 
-# torch is CPU-only. Install it explicitly with:
+# Data tooling for the Hugging Face radio dataset loader
+pyarrow
+pandas
+pyyaml
+
+# torch is CPU-only for this project. Install it explicitly first:
 #   pip install torch --index-url https://download.pytorch.org/whl/cpu
-# then install the rest of this file.
+torch

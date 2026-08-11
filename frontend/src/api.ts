@@ -1,6 +1,7 @@
 import type { CompressResult, SessionPayload, VoiceSession, VoiceStatus } from "./types";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
+// Same-origin in a built deployment (the API serves the frontend); explicit host in dev.
+const API_BASE = import.meta.env.VITE_API_BASE ?? (import.meta.env.DEV ? "http://localhost:8000" : "");
 
 async function unwrap<T>(res: Response): Promise<T> {
   if (!res.ok) {
