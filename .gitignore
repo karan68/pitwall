@@ -11,3 +11,5 @@ dist/
 # Runtime session state, regenerated from seed_session.json
 backend/data/session.json
 backend/data/omnidim_agent.json
+backend/data/hf_cache/
+backend/sample_audio/real/

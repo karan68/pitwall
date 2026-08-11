@@ -3,6 +3,7 @@ import { addBaselineClip, analyzeClip, fetchSession, resetBaseline, resetSession
 import AdvisorPanel from "./components/AdvisorPanel";
 import EngineerConsole from "./components/EngineerConsole";
 import LoadLapChart from "./components/LoadLapChart";
+import Provenance from "./components/Provenance";
 import QuadrantChart from "./components/QuadrantChart";
 import RadioInput from "./components/RadioInput";
 import RadioLog from "./components/RadioLog";
@@ -127,6 +128,7 @@ export default function App() {
           )}
           {analytics && <LoadLapChart analytics={analytics} events={session!.events} />}
           {analytics?.sufficientData && <CostSummary analytics={analytics} />}
+          {session && <Provenance session={session.session} />}
           {selected && <ReferenceCompare event={selected} />}
         </div>
 
@@ -150,14 +152,21 @@ function Transcript({ event }: { event: RadioEvent }) {
         <h2 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
           Lap {event.lap} · transcript
         </h2>
-        <span
-          className={`rounded px-2 py-0.5 text-[10px] font-medium ${
-            quality.usable ? "bg-neutral-800 text-neutral-400" : "bg-amber-500/15 text-amber-300"
-          }`}
-          title={quality.issues.join(" ")}
-        >
-          {quality.usable ? `SNR ${quality.snrDb} dB` : "Audio quality warning"}
-        </span>
+        <div className="flex items-center gap-1.5">
+          {event.asr && (
+            <span className="rounded bg-neutral-800 px-2 py-0.5 text-[10px] text-neutral-500">
+              {event.asr.model.split("/").pop()}
+            </span>
+          )}
+          <span
+            className={`rounded px-2 py-0.5 text-[10px] font-medium ${
+              quality.usable ? "bg-neutral-800 text-neutral-400" : "bg-amber-500/15 text-amber-300"
+            }`}
+            title={quality.issues.join(" ")}
+          >
+            {quality.usable ? `SNR ${quality.snrDb} dB` : "Audio quality warning"}
+          </span>
+        </div>
       </div>
       <p className="mt-2 text-lg leading-snug text-neutral-100">
         {event.transcript || <span className="text-neutral-600">(no speech detected)</span>}

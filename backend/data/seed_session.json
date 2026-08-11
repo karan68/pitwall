@@ -1,9 +1,14 @@
 {
   "session": {
-    "driver": "Driver 44",
-    "team": "Reference Team",
-    "stint": "Stint 2 · Medium",
-    "referenceLapSeconds": 92.4
+    "driver": "Driver",
+    "team": "",
+    "stint": "Session",
+    "referenceLapSeconds": 92.4,
+    "provenance": {
+      "audio": "Not set",
+      "transcripts": "Whisper, local",
+      "lapTimes": "Synthetic \u2014 illustrative only"
+    }
   },
   "laps": [
     { "lap": 1, "timeSeconds": 94.8 },

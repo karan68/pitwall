@@ -32,10 +32,12 @@ POPULATION_PRIORS = {
 
 AROUSAL_FEATURES = {
     "f0MeanHz": 1.0,
-    "energyDb": 0.8,
     "articulationRate": 1.0,
-    # Weighted lowest of the four: it is the measure most disturbed by radio noise.
-    "highFreqRatio": 0.5,
+    # Spectral tilt is the level-invariant vocal-effort correlate. Absolute
+    # loudness is deliberately absent: on broadcast radio dBFS is set by the TV
+    # mix, not the driver. Measured on real F1 audio it differed by 8.5 dB
+    # between clips of the same driver and swamped every other signal.
+    "highFreqRatio": 0.6,
 }
 
 # Negative weight means "lower is worse": harmonics-to-noise falls as the voice strains.
@@ -52,6 +54,15 @@ QUADRANT_THRESHOLD = 0.6
 # without the clamp a tight baseline turns ordinary speech into a z of 20.
 MIN_SPREAD_FRACTION = 0.5
 Z_CLAMP = 4.0
+
+# Cycle-to-cycle measures scale with recording noise, so their usable resolution
+# is proportional to the level measured rather than a fixed constant. Without
+# this, ordinary variation in broadcast quality pinned them at the clamp.
+RELATIVE_SPREAD_FLOOR = {"jitterPct": 0.5, "shimmerPct": 0.4, "hnrDb": 0.5}
+
+# Beyond this gap between a call's SNR and the baseline's, the strain axis is
+# comparing recording conditions rather than the voice.
+COMPARABLE_SNR_DB = 6.0
 
 STATE_DESCRIPTIONS = {
     "Locked In": "High effort, clean voice. Driver is on it — this is performance, not distress.",
@@ -78,15 +89,22 @@ def build_baseline(samples: list[dict]) -> dict:
         values = [s[feature] for s in samples if s.get(feature)]
         if calibrated and len(values) >= MIN_BASELINE_SAMPLES:
             centre, spread = _robust_stats(values)
-            spread = max(spread, prior_spread * MIN_SPREAD_FRACTION)
+            spread = max(
+                spread,
+                prior_spread * MIN_SPREAD_FRACTION,
+                abs(centre) * RELATIVE_SPREAD_FLOOR.get(feature, 0.0),
+            )
         else:
             centre, spread = prior_centre, prior_spread
         stats[feature] = {"centre": round(centre, 3), "spread": round(spread, 3)}
+
+    snrs = [s["snrDb"] for s in samples if s.get("snrDb") is not None]
 
     return {
         "calibrated": calibrated,
         "sampleCount": len(samples),
         "samplesNeeded": max(0, MIN_BASELINE_SAMPLES - len(samples)),
+        "snrDb": round(float(np.median(snrs)), 1) if snrs else None,
         "stats": stats,
     }
 
@@ -110,7 +128,7 @@ def _weighted_axis(z_scores: dict, weights: dict) -> float:
     return sum(z_scores[f] * w for f, w in used.items()) / total
 
 
-def classify(features: dict, baseline: dict) -> dict:
+def classify(features: dict, baseline: dict, snr_db: float | None = None) -> dict:
     z_scores = _z_scores(features, baseline)
     arousal = _weighted_axis(z_scores, AROUSAL_FEATURES)
     strain = _weighted_axis(z_scores, STRAIN_FEATURES)
@@ -139,12 +157,19 @@ def classify(features: dict, baseline: dict) -> dict:
         "driverLoad": round(float(np.clip(load, 0, 100)), 1),
         "zScores": z_scores,
         "calibrated": baseline["calibrated"],
-        "confidence": _confidence(baseline, z_scores, arousal, strain),
+        "confidence": _confidence(baseline, z_scores, arousal, strain, snr_db),
         "drivers": _top_drivers(z_scores),
     }
 
 
-def _confidence(baseline: dict, z_scores: dict, arousal: float, strain: float) -> dict:
+def _snr_gap(baseline: dict, snr_db: float | None) -> float | None:
+    if snr_db is None or baseline.get("snrDb") is None:
+        return None
+    return abs(snr_db - baseline["snrDb"])
+
+
+def _confidence(baseline: dict, z_scores: dict, arousal: float, strain: float,
+                snr_db: float | None = None) -> dict:
     """State how much to trust this reading, and say so in words."""
     if not baseline["calibrated"]:
         return {
@@ -154,6 +179,16 @@ def _confidence(baseline: dict, z_scores: dict, arousal: float, strain: float) -
         }
     if len(z_scores) < 5:
         return {"level": "Low", "reason": "Too few usable voice measurements in this clip."}
+
+    gap = _snr_gap(baseline, snr_db)
+    if gap is not None and gap > COMPARABLE_SNR_DB:
+        return {
+            "level": "Low",
+            "reason": f"This clip's signal-to-noise ratio differs from the baseline by {gap:.0f} dB. "
+            "Voice-instability measures move with recording quality, so the strain reading is "
+            "comparing conditions as much as the driver.",
+        }
+
     if max(abs(arousal), abs(strain)) < 0.35:
         return {"level": "Medium", "reason": "Reading sits close to this driver's normal voice."}
     return {"level": "High", "reason": f"Calibrated on {baseline['sampleCount']} clips."}

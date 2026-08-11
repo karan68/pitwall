@@ -59,6 +59,7 @@ export interface RadioEvent {
   lap: number;
   fileName: string;
   transcript: string;
+  asr?: { model: string; degenerate: boolean };
   quality: SignalQuality;
   biomarkers: Biomarkers;
   content: ContentReading;
@@ -109,6 +110,11 @@ export interface SessionPayload {
     team: string;
     stint: string;
     referenceLapSeconds: number;
+    provenance?: {
+      audio: string;
+      transcripts: string;
+      lapTimes: string;
+    };
   };
   laps: { lap: number; timeSeconds: number }[];
   events: RadioEvent[];

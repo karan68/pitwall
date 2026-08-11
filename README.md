@@ -203,27 +203,70 @@ the rest are analysed as radio calls:
 
 ---
 
-## Demo audio — read this before the demo
+## Real data
 
-`backend/sample_audio/placeholder/` holds synthetic clips from `make_placeholder_clips.ps1`.
-They exist to prove the pipeline runs. **They are not good enough for the demo.**
+The system runs on **real Formula 1 team radio**, not synthesised stand-ins:
 
-Text-to-speech has near-zero jitter and shimmer no matter how fast or slow you set it. A
-synthetic "stressed" clip therefore reads as *Locked In* — high effort, clean voice — because
-that is genuinely what it is. The engine is right; the audio simply cannot express strain.
-This is an expected limitation, not a bug, and the thresholds have deliberately **not** been
-tuned to make fake audio pass.
+**Dataset:** [`MikCil/f1-team-radio`](https://huggingface.co/datasets/MikCil/f1-team-radio) — CC BY 4.0,
+public, not gated. One shard alone holds **2,937 clips across 26 drivers and 37 Grands Prix**,
+each with a human `transcription`.
 
-Record real voices. For each driver:
+That ground-truth column is the point: it lets us **measure** our speech recognition on real
+broadcast audio instead of asserting that it works.
 
-- **3 calm reference clips** — normal delivery, ~5 s each. These set the baseline.
-- **Urgent/overloaded** — fast, loud, pressured. Produces the Stressed quadrant.
-- **Exhausted** — slow, quiet, breathy, with audible strain. Produces Tired.
-- **Under-reporting** — "no, I'm fine, don't worry" said while clearly strained. Fires the
-  mismatch flag, and is the most memorable moment in the demo.
-- **Hazard** — "yellow flag, car in the wall". Proves safety overrides a closed window.
+```powershell
+cd backend
+.venv\Scripts\python.exe load_real_radio.py --driver LEWHAM01 --baseline 6 --calls 12
+.venv\Scripts\python.exe run_stint.py sample_audio\real\LEWHAM01
+```
 
-Self-recorded audio also avoids any question over broadcast rights.
+`load_real_radio.py` downloads a parquet shard, surveys the drivers, and exports clips plus a
+manifest carrying the ground truth. `run_stint.py` calibrates, analyses, and reports word error
+rate against it.
+
+### What running on real audio actually showed
+
+Every number below was measured on Lewis Hamilton's radio from the 2018 Australian Grand Prix.
+
+**1. Whisper hallucinates on real radio, badly.** `whisper-base.en` scored **174.7% WER** — a
+five-word clip (*"I'll shut the TV up."*) decoded as *"I'm sorry"* twenty-eight times. Blocking
+repeated n-grams at decode time, adding a degenerate-output detector, and moving to
+`whisper-small.en` brought it to **17.7% WER** over 249 reference words. One clip is word-perfect.
+The worst remaining case truncates rather than invents, which is the safer failure.
+
+**2. Absolute loudness is not a usable biomarker on broadcast audio.** Clips of the same driver
+differed by **8.5 dB** in level (baseline median −14.1 dB, call median −22.6 dB) purely from the
+TV mix. That dragged every call to −2.4σ to −3.3σ on energy and made the whole session read
+"Tired". `energyDb` is still measured and displayed but is **excluded from the arousal axis**, and
+the comment in `state.py` says why.
+
+**3. Cycle-to-cycle measures scale with recording noise.** Jitter and shimmer saturated the ±4σ
+clamp on 5 of 10 clips. Their minimum spread is now proportional to the measured level rather
+than a clean-speech constant.
+
+**4. You cannot compare strain across clips of different quality — so we don't pretend to.**
+SNR across clips of the *same driver* ranged from **8.2 dB to 60 dB**. Where a call's SNR differs
+from the baseline by more than 6 dB, the reading is marked **Low confidence** with the reason
+stated on screen. On this dataset that is most of them. That is the honest result, and it is a
+better answer than a confident number.
+
+**5. The quality gate earns its place.** It rejected 2 of 6 calibration clips outright
+(*"Almost no voiced speech detected"*, *"Low speech-to-noise ratio (2.9 dB)"*) and flagged a
+further call. None of them should have been scored.
+
+### A limitation worth stating
+
+Many clips in this dataset contain **both the driver and the engineer** in one recording. Voice
+biomarkers computed over such a clip mix two speakers. We do not do speaker diarisation, so
+those readings describe the exchange rather than the driver alone. Shorter clips are usually
+single-speaker; the long ones often are not.
+
+### Your own recordings
+
+`make_placeholder_clips.ps1` generates synthetic clips for smoke-testing only. Text-to-speech has
+near-zero jitter and shimmer at any speed, so a synthetic "stressed" clip correctly reads *Locked
+In* — high effort, clean voice. The engine is right; the audio cannot express strain. Thresholds
+have deliberately **not** been tuned to make synthetic audio pass.
 
 ---
 
@@ -231,13 +274,16 @@ Self-recorded audio also avoids any question over broadcast rights.
 
 | Model | Role |
 |---|---|
-| `openai/whisper-base.en` | Speech to text |
+| `openai/whisper-small.en` | Speech to text (17.7% WER measured on real F1 radio) |
 | `valhalla/distilbart-mnli-12-1` | Zero-shot radio intent classification |
 | `superb/wav2vec2-base-superb-er` | Reference emotion classifier, kept as an on-screen cross-check |
 
+| Dataset | Role |
+|---|---|
+| `MikCil/f1-team-radio` | Real broadcast radio + human transcriptions for ASR scoring (CC BY 4.0) |
+
 Model names are constants at the top of each service and swap without touching anything else.
-`whisper-small.en` is a drop-in accuracy upgrade if CPU time allows — `base.en` currently
-mis-hears "braking points" as "breaking points".
+`PITWALL_ASR_MODEL` overrides the ASR model without a code change.
 
 ## Voice partner
 
@@ -251,7 +297,10 @@ mis-hears "braking points" as "breaking points".
 
 - Biomarkers are validated against synthetic signals of known properties, not against labelled
   driver-stress data. No such public dataset exists for race radio.
-- Lap-time correlations from a single stint are indicative, not evidence. The interface says so.
+- Lap times are **synthetic and illustrative**. The radio dataset carries no lap timing, and the
+  interface labels this under Data provenance rather than implying otherwise.
+- Correlations from a single stint are indicative, not evidence. The interface says so.
+- Clips containing both driver and engineer are scored as one voice; there is no diarisation.
 - The reference emotion classifier is shown for contrast, not treated as ground truth. Neither
   reading is claimed to be clinically validated stress detection.
 - The system advises. The engineer decides.
@@ -274,11 +323,13 @@ backend/
     audio_utils.py           decode + resample to 16 kHz mono
     omnidim.py               OmniDimension agent + voice session minting
     briefing.py              the live reading, flattened into speech
-  verify_features.py         27-check verification harness
+  verify_features.py         37-check verification harness
   verify_voice.py            end-to-end check of the voice path
+  load_real_radio.py         pull real F1 radio from Hugging Face
+  run_stint.py               analyse a folder of clips, score ASR against ground truth
   seed_demo.py               load a stint from a folder of clips
   make_placeholder_clips.ps1 synthetic smoke-test audio
 frontend/src/
   App.tsx                    layout and session state
-  components/                status strip, quadrant, charts, advisor, console, voice, log
+  components/                status strip, quadrant, charts, advisor, console, voice, provenance, log
 ```

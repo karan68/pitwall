@@ -94,8 +94,9 @@ async def add_baseline(file: UploadFile = File(...)):
     if not quality["usable"]:
         raise HTTPException(400, "; ".join(quality["issues"]))
 
-    text = transcribe(audio, sr)
-    sample = features.extract(audio, sr, word_count=len(text.split()))
+    asr = transcribe(audio, sr)
+    sample = features.extract(audio, sr, word_count=len(asr["text"].split()))
+    sample["snrDb"] = quality["snrDb"]
 
     store = _read_store()
     store["baselineSamples"].append(sample)
@@ -113,11 +114,21 @@ async def analyze(file: UploadFile = File(...), lap: int | None = Form(None)):
     quality = features.signal_quality(audio, sr)
     store = _read_store()
 
-    transcript = transcribe(audio, sr)
+    asr = transcribe(audio, sr)
+    transcript = asr["text"]
+    if asr["degenerate"]:
+        quality = {
+            **quality,
+            "usable": False,
+            "issues": quality["issues"] + [
+                "Speech recognition collapsed into repetition on this clip; transcript discarded."
+            ],
+        }
+
     biomarkers = features.extract(audio, sr, word_count=len(transcript.split()))
     baseline = state.build_baseline(store["baselineSamples"])
 
-    driver_state = state.classify(biomarkers, baseline)
+    driver_state = state.classify(biomarkers, baseline, snr_db=quality["snrDb"])
     said = content.analyze(transcript)
 
     context = {
@@ -131,6 +142,7 @@ async def analyze(file: UploadFile = File(...), lap: int | None = Form(None)):
         "lap": lap if lap is not None else len(store["events"]) + 1,
         "fileName": file.filename,
         "transcript": transcript,
+        "asr": {"model": asr["model"], "degenerate": asr["degenerate"]},
         "quality": quality,
         "biomarkers": biomarkers,
         "content": said,
@@ -146,6 +158,24 @@ async def analyze(file: UploadFile = File(...), lap: int | None = Form(None)):
     payload = _session_payload(store)
     payload["event"] = event
     return payload
+
+
+class SessionContext(BaseModel):
+    driver: str
+    team: str = ""
+    stint: str = ""
+    provenance: dict[str, str] | None = None
+
+
+@app.post("/api/session/context")
+def set_session_context(context: SessionContext):
+    """Label whose radio this is and where each part of the data came from."""
+    store = _read_store()
+    store["session"].update(
+        {k: v for k, v in context.model_dump().items() if v not in (None, "")}
+    )
+    _write_store(store)
+    return _session_payload(store)
 
 
 class ComposeRequest(BaseModel):
