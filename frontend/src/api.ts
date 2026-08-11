@@ -1,36 +1,44 @@
-import type { AnalyzeResponse, RaceState } from "./types";
+import type { CompressResult, SessionPayload } from "./types";
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:8000";
 
-export async function fetchState(): Promise<RaceState> {
-  const res = await fetch(`${API_BASE}/api/laptimes`);
-  if (!res.ok) throw new Error("Failed to load lap data");
-  return res.json();
-}
-
-export async function analyzeClip(
-  file: Blob,
-  fileName: string,
-  lap?: number,
-): Promise<AnalyzeResponse> {
-  const form = new FormData();
-  form.append("file", file, fileName);
-  if (lap !== undefined) form.append("lap", String(lap));
-
-  const res = await fetch(`${API_BASE}/api/analyze`, {
-    method: "POST",
-    body: form,
-  });
-
+async function unwrap<T>(res: Response): Promise<T> {
   if (!res.ok) {
-    const detail = await res.json().catch(() => null);
-    throw new Error(detail?.detail ?? "Analysis failed");
+    const body = await res.json().catch(() => null);
+    throw new Error(body?.detail ?? `Request failed (${res.status})`);
   }
   return res.json();
 }
 
-export async function resetEvents(): Promise<RaceState> {
-  const res = await fetch(`${API_BASE}/api/reset`, { method: "POST" });
-  if (!res.ok) throw new Error("Reset failed");
-  return res.json();
+export function fetchSession() {
+  return fetch(`${API_BASE}/api/session`).then(unwrap<SessionPayload>);
+}
+
+export function analyzeClip(file: Blob, fileName: string, lap?: number) {
+  const form = new FormData();
+  form.append("file", file, fileName);
+  if (lap !== undefined) form.append("lap", String(lap));
+  return fetch(`${API_BASE}/api/analyze`, { method: "POST", body: form }).then(unwrap<SessionPayload>);
+}
+
+export function addBaselineClip(file: Blob, fileName: string) {
+  const form = new FormData();
+  form.append("file", file, fileName);
+  return fetch(`${API_BASE}/api/baseline`, { method: "POST", body: form }).then(unwrap<SessionPayload>);
+}
+
+export function resetSession() {
+  return fetch(`${API_BASE}/api/session/reset`, { method: "POST" }).then(unwrap<SessionPayload>);
+}
+
+export function resetBaseline() {
+  return fetch(`${API_BASE}/api/baseline/reset`, { method: "POST" }).then(unwrap<SessionPayload>);
+}
+
+export function compose(message: string, wordBudget: number) {
+  return fetch(`${API_BASE}/api/compose`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, wordBudget }),
+  }).then(unwrap<CompressResult>);
 }

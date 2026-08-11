@@ -1,75 +1,35 @@
-import { useEffect, useRef, useState } from "react";
-import { analyzeClip, fetchState, resetEvents } from "./api";
-import LapChart from "./components/LapChart";
-import MoodBadge from "./components/MoodBadge";
-import TranscriptCard from "./components/TranscriptCard";
-import type { RaceState, RadioEvent } from "./types";
+import { useEffect, useState } from "react";
+import { addBaselineClip, analyzeClip, fetchSession, resetBaseline, resetSession } from "./api";
+import AdvisorPanel from "./components/AdvisorPanel";
+import EngineerConsole from "./components/EngineerConsole";
+import LoadLapChart from "./components/LoadLapChart";
+import QuadrantChart from "./components/QuadrantChart";
+import RadioInput from "./components/RadioInput";
+import RadioLog from "./components/RadioLog";
+import ReferenceCompare from "./components/ReferenceCompare";
+import StateBreakdown from "./components/StateBreakdown";
+import StatusStrip from "./components/StatusStrip";
+import type { RadioEvent, SessionPayload } from "./types";
 
 export default function App() {
-  const [state, setState] = useState<RaceState | null>(null);
-  const [lastEvent, setLastEvent] = useState<RadioEvent | null>(null);
-  const [lapInput, setLapInput] = useState("");
-  const [file, setFile] = useState<File | null>(null);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [recording, setRecording] = useState(false);
+  const [session, setSession] = useState<SessionPayload | null>(null);
+  const [selected, setSelected] = useState<RadioEvent | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<BlobPart[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchState()
-      .then(setState)
-      .catch((e) => setError(e instanceof Error ? e.message : "Failed to load lap data"));
+    fetchSession()
+      .then(setSession)
+      .catch((e) => setError(e instanceof Error ? e.message : "Backend unreachable"));
   }, []);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] ?? null;
-    setFile(f);
-    setAudioUrl(f ? URL.createObjectURL(f) : null);
-  }
-
-  async function startRecording() {
-    setError(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      chunksRef.current = [];
-      recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
-      recorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        const recordedFile = new File([blob], `recording-${Date.now()}.webm`, { type: "audio/webm" });
-        setFile(recordedFile);
-        setAudioUrl(URL.createObjectURL(blob));
-        stream.getTracks().forEach((t) => t.stop());
-      };
-      recorder.start();
-      mediaRecorderRef.current = recorder;
-      setRecording(true);
-    } catch {
-      setError("Could not access the microphone.");
-    }
-  }
-
-  function stopRecording() {
-    mediaRecorderRef.current?.stop();
-    setRecording(false);
-  }
-
-  async function handleAnalyze() {
-    if (!file) {
-      setError("Record or upload a radio clip first.");
-      return;
-    }
+  async function run<T>(action: () => Promise<T>, onDone: (result: T) => void) {
     setBusy(true);
     setError(null);
+    setNotice(null);
     try {
-      const lap = lapInput.trim() ? Number(lapInput) : undefined;
-      const result = await analyzeClip(file, file.name, lap);
-      setLastEvent(result.event);
-      setState((prev) => (prev ? { ...prev, events: result.events } : prev));
-      setLapInput("");
+      onDone(await action());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -77,113 +37,167 @@ export default function App() {
     }
   }
 
-  async function handleReset() {
-    const fresh = await resetEvents();
-    setState(fresh);
-    setLastEvent(null);
-  }
+  const handleAnalyze = (file: File, lap?: number) =>
+    run(
+      () => analyzeClip(file, file.name, lap),
+      (payload) => {
+        setSession(payload);
+        setSelected(payload.event ?? null);
+      },
+    );
+
+  const handleCalibrate = (file: File) =>
+    run(
+      () => addBaselineClip(file, file.name),
+      (payload) => {
+        setSession(payload);
+        setNotice(
+          payload.baseline.calibrated
+            ? `Baseline set from ${payload.baseline.sampleCount} clips. Readings are now driver-relative.`
+            : `Baseline clip added (${payload.baseline.sampleCount}). ${payload.baseline.samplesNeeded} more needed.`,
+        );
+      },
+    );
+
+  const analytics = session?.analytics;
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100">
-      <header className="border-b border-neutral-800 px-6 py-5">
-        <p className="text-xs font-semibold uppercase tracking-widest text-red-500">
-          Grand Prix · AI Race Month
-        </p>
-        <h1 className="text-2xl font-bold">The Silent Co-Driver</h1>
-        <p className="text-sm text-neutral-400">Reading driver stress from radio calls, lap by lap.</p>
+    <div className="min-h-screen bg-neutral-950 text-neutral-200">
+      <header className="flex flex-wrap items-center justify-between gap-4 px-6 py-4">
+        <div className="flex items-baseline gap-4">
+          <h1 className="text-xl font-bold tracking-[0.2em] text-neutral-50">PITWALL</h1>
+          <p className="text-xs text-neutral-500">
+            The Silent Co-Driver — driver state from radio, and the call that follows
+          </p>
+        </div>
+        <div className="flex items-center gap-3 text-xs text-neutral-500">
+          {session && (
+            <span className="tabular-nums">
+              {session.session.driver} · {session.session.stint}
+            </span>
+          )}
+          <button
+            onClick={() => run(resetSession, (p) => (setSession(p), setSelected(null)))}
+            className="rounded border border-neutral-800 px-2.5 py-1 hover:bg-neutral-900"
+          >
+            Clear stint
+          </button>
+          <button
+            onClick={() => run(resetBaseline, setSession)}
+            className="rounded border border-neutral-800 px-2.5 py-1 hover:bg-neutral-900"
+          >
+            Clear baseline
+          </button>
+        </div>
       </header>
 
-      <main className="mx-auto grid max-w-5xl gap-6 px-6 py-8 lg:grid-cols-2">
-        <section className="flex flex-col gap-4 rounded-xl border border-neutral-800 bg-neutral-900/40 p-5">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">1. Radio call</h2>
+      <StatusStrip event={selected} />
 
-          <div className="flex flex-wrap items-center gap-3">
-            <input
-              type="file"
-              accept="audio/*"
-              onChange={handleFileChange}
-              className="text-sm text-neutral-300 file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-800 file:px-3 file:py-1.5 file:text-neutral-200"
-            />
-            {!recording ? (
-              <button onClick={startRecording} className="rounded-lg bg-neutral-800 px-3 py-1.5 text-sm hover:bg-neutral-700">
-                🎙 Record
-              </button>
-            ) : (
-              <button onClick={stopRecording} className="animate-pulse rounded-lg bg-red-600 px-3 py-1.5 text-sm">
-                ⏹ Stop
-              </button>
-            )}
-          </div>
+      {(error || notice) && (
+        <div
+          className={`px-6 py-2 text-xs ${
+            error ? "bg-red-950/40 text-red-300" : "bg-emerald-950/30 text-emerald-300"
+          }`}
+        >
+          {error ?? notice}
+        </div>
+      )}
 
-          {audioUrl && <audio controls src={audioUrl} className="w-full" />}
+      <main className="mx-auto grid max-w-[1400px] gap-4 px-6 py-5 lg:grid-cols-2">
+        <div className="flex flex-col gap-4">
+          <RadioInput
+            onAnalyze={handleAnalyze}
+            onCalibrate={handleCalibrate}
+            busy={busy}
+            baselineCount={session?.baseline.sampleCount ?? 0}
+            samplesNeeded={session?.baseline.samplesNeeded ?? 3}
+          />
 
-          <div className="flex items-center gap-3">
-            <label className="text-sm text-neutral-400">Lap #</label>
-            <input
-              type="number"
-              min={1}
-              value={lapInput}
-              onChange={(e) => setLapInput(e.target.value)}
-              placeholder="auto"
-              className="w-24 rounded-lg border border-neutral-700 bg-neutral-800 px-2 py-1 text-sm"
-            />
-            <button
-              onClick={handleAnalyze}
-              disabled={busy}
-              className="ml-auto rounded-lg bg-red-600 px-4 py-1.5 text-sm font-semibold hover:bg-red-500 disabled:opacity-50"
-            >
-              {busy ? "Analyzing…" : "Analyze"}
-            </button>
-          </div>
+          {selected && <Transcript event={selected} />}
+          {selected && <AdvisorPanel event={selected} />}
+          <EngineerConsole event={selected} />
+        </div>
 
-          {error && <p className="text-sm text-red-400">{error}</p>}
-
-          {lastEvent && (
-            <div className="flex flex-col gap-4 border-t border-neutral-800 pt-4">
-              <TranscriptCard event={lastEvent} />
-              <MoodBadge event={lastEvent} />
-            </div>
+        <div className="flex flex-col gap-4">
+          {selected && <StateBreakdown event={selected} />}
+          {session && session.events.length > 0 && (
+            <QuadrantChart events={session.events} selectedId={selected?.id ?? null} />
           )}
-        </section>
+          {analytics && <LoadLapChart analytics={analytics} events={session!.events} />}
+          {analytics?.sufficientData && <CostSummary analytics={analytics} />}
+          {selected && <ReferenceCompare event={selected} />}
+        </div>
 
-        <section className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-neutral-400">2. Lap time vs mood</h2>
-            <button onClick={handleReset} className="text-xs text-neutral-500 hover:text-neutral-300">
-              Reset session
-            </button>
-          </div>
-
-          {state && <LapChart laps={state.laps} events={state.events} />}
-
-          <div className="flex flex-col gap-2 rounded-xl border border-neutral-800 bg-neutral-900/40 p-4">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Session log</h3>
-            {state?.events.length ? (
-              <ul className="flex flex-col gap-2 text-sm">
-                {[...state.events].reverse().map((ev) => (
-                  <li key={ev.id} className="flex items-center justify-between gap-2 rounded-lg bg-neutral-900 px-3 py-2">
-                    <span className="text-neutral-400">Lap {ev.lap}</span>
-                    <span className="truncate px-2 text-neutral-200">{ev.transcript}</span>
-                    <span
-                      className={
-                        ev.label === "Stressed"
-                          ? "text-red-400"
-                          : ev.label === "Tired"
-                            ? "text-amber-400"
-                            : "text-emerald-400"
-                      }
-                    >
-                      {ev.label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-neutral-500">No radio calls analyzed yet this session.</p>
-            )}
-          </div>
-        </section>
+        <div className="lg:col-span-2">
+          <RadioLog
+            events={session?.events ?? []}
+            selectedId={selected?.id ?? null}
+            onSelect={setSelected}
+          />
+        </div>
       </main>
     </div>
+  );
+}
+
+function Transcript({ event }: { event: RadioEvent }) {
+  const { quality } = event;
+  return (
+    <section className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
+          Lap {event.lap} · transcript
+        </h2>
+        <span
+          className={`rounded px-2 py-0.5 text-[10px] font-medium ${
+            quality.usable ? "bg-neutral-800 text-neutral-400" : "bg-amber-500/15 text-amber-300"
+          }`}
+          title={quality.issues.join(" ")}
+        >
+          {quality.usable ? `SNR ${quality.snrDb} dB` : "Audio quality warning"}
+        </span>
+      </div>
+      <p className="mt-2 text-lg leading-snug text-neutral-100">
+        {event.transcript || <span className="text-neutral-600">(no speech detected)</span>}
+      </p>
+      {!quality.usable && (
+        <ul className="mt-2 list-disc pl-4 text-[11px] leading-relaxed text-amber-300/80">
+          {quality.issues.map((issue) => (
+            <li key={issue}>{issue}</li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
+function CostSummary({ analytics }: { analytics: NonNullable<SessionPayload["analytics"]> }) {
+  const cells = [
+    { label: "Time lost to driver load", value: `${analytics.estimatedSecondsLost}s`, accent: true },
+    { label: "Laps above threshold", value: `${analytics.lapsAffected}` },
+    {
+      label: "Warning lead time",
+      value: analytics.lagLaps ? `${analytics.lagLaps} lap${analytics.lagLaps > 1 ? "s" : ""}` : "same lap",
+    },
+    { label: "Radio calls", value: `${analytics.sampleSize}` },
+  ];
+
+  return (
+    <section className="rounded-lg border border-neutral-800 bg-neutral-900/40 p-5">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">Stint cost</h2>
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {cells.map((cell) => (
+          <div key={cell.label}>
+            <p className={`text-xl font-semibold tabular-nums ${cell.accent ? "text-red-300" : "text-neutral-200"}`}>
+              {cell.value}
+            </p>
+            <p className="mt-0.5 text-[10px] leading-tight text-neutral-500">{cell.label}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-[11px] leading-relaxed text-neutral-600">
+        Estimated from the fitted slope of lap-time delta against driver load. Indicative for this stint only.
+      </p>
+    </section>
   );
 }
