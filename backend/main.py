@@ -228,13 +228,6 @@ def compose(request: ComposeRequest):
     return advisor.compress(request.message, max(3, request.wordBudget))
 
 
-# Serve the built frontend when it exists, so one process on one port is the
-# whole application. Mounted last so it never shadows an /api route.
-FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
-if FRONTEND_DIST.is_dir():
-    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
-
-
 def _current_briefing(event_id: int | None = None) -> dict:
     store = _read_store()
     payload = _session_payload(store)
@@ -273,3 +266,11 @@ def voice_session(request: VoiceSessionRequest | None = None):
         raise HTTPException(502, str(exc)) from exc
 
     return {**session, "briefedOn": variables["lap"], "summary": briefing.spoken_summary(variables)}
+
+
+# A Mount at "/" matches every path registered after it, so this must stay the
+# last statement in the file. Building the frontend once silently 404'd every
+# route declared below it; verify_api.py now guards against that returning.
+FRONTEND_DIST = Path(__file__).parent.parent / "frontend" / "dist"
+if FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
