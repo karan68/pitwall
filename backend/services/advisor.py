@@ -43,19 +43,19 @@ def advise(driver_state: dict, content: dict, context: dict) -> dict:
     intent = content["intent"]
     priority = content["priority"]
 
-    window, window_reason = _radio_window(state, load, priority)
+    window, window_reason = _radio_window(state, load, priority, content.get("selfReportedLimit", False))
     flags = _flags(driver_state, content, context)
 
     return {
         "radioWindow": window,
         "windowReason": window_reason,
         "wordBudget": WORD_BUDGET[window],
-        "action": _action(state, intent),
+        "action": _action(state, intent, content.get("selfReportedLimit", False)),
         "flags": flags,
     }
 
 
-def _radio_window(state: str, load: float, priority: str) -> tuple[str, str]:
+def _radio_window(state: str, load: float, priority: str, self_reported_limit: bool) -> tuple[str, str]:
     if priority == "Critical":
         return "Open", "Safety-critical traffic always goes through, whatever the driver load."
 
@@ -65,12 +65,29 @@ def _radio_window(state: str, load: float, priority: str) -> tuple[str, str]:
         return "Closed", "Driver is at capacity. A non-critical call now raises error risk."
     if state == "Tired":
         return "Caution", "Fatigue reading. Keep it short and concrete, avoid anything that needs interpretation."
+
+    # The driver has said out loud that they are at a limit. Take that at face
+    # value: a composed voice does not make the report untrue.
+    if self_reported_limit:
+        return "Caution", (
+            "Driver has reported being at a limit. The voice reads composed, but a first-hand "
+            "report outranks the tone. Keep transmissions short."
+        )
+
     if load > 62:
         return "Caution", "Load is elevated even though the voice reads calm."
     return "Open", "Driver has spare capacity. Good window for a full strategy briefing."
 
 
-def _action(state: str, intent: str) -> dict:
+def _action(state: str, intent: str, self_reported_limit: bool = False) -> dict:
+    # A first-person report of hitting a limit is acted on whatever the voice did.
+    if self_reported_limit and state in ("Calm", "Locked In"):
+        return {
+            "headline": "Treat the report as real. Acknowledge, then check hydration, temps and stint length.",
+            "rationale": "The driver said they are at a limit while sounding composed. Drivers who stay "
+            "articulate under load are the ones whose problems get missed.",
+        }
+
     table = {
         ("Stressed", "Car problem"): (
             "Confirm you have seen it, give one number, nothing else.",
@@ -104,6 +121,10 @@ def _action(state: str, intent: str) -> dict:
             "Good window to debrief the issue properly and agree a plan.",
             "Spare capacity is when you get the driver's best technical feedback.",
         ),
+        ("Calm", "Physical strain"): (
+            "Take the report seriously and plan around it, even though the voice reads calm.",
+            "Physical complaints do not need a strained voice to be true.",
+        ),
     }
 
     default_by_state = {
@@ -133,7 +154,7 @@ def _flags(driver_state: dict, content: dict, context: dict) -> list[dict]:
     flags = []
 
     # The signature finding of combining tone with content: the words say one
-    # thing, the voice says another.
+    # thing, the voice says another. It matters in both directions.
     if content["downplaying"] and driver_state["strain"] >= 0.6:
         flags.append(
             {
@@ -141,6 +162,17 @@ def _flags(driver_state: dict, content: dict, context: dict) -> list[dict]:
                 "title": "Possible under-reporting",
                 "detail": "Driver is waving the team off, but vocal strain is well above their baseline. "
                 "Check telemetry rather than taking the answer at face value.",
+            }
+        )
+
+    if content.get("selfReportedLimit") and driver_state["strain"] < 0.6:
+        flags.append(
+            {
+                "level": "warning",
+                "title": "Reported limit, composed voice",
+                "detail": "Driver has said they are at a limit, but the voice does not show it. Either they "
+                "are stating it calmly — which makes it more credible, not less — or the radio audio is "
+                "not carrying the strain. Act on the words.",
             }
         )
 

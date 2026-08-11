@@ -25,13 +25,49 @@ HAZARD_TERMS = (
     "fire", "smoke", "off", "in the wall", "spun", "accident", "oil",
 )
 
+# Whisper transcribes expanded forms ("it is fine", "do not worry"), so phrase
+# matching has to be done on a normalised string or it silently never fires.
+CONTRACTIONS = {
+    "i am": "i'm", "it is": "it's", "that is": "that's", "there is": "there's",
+    "do not": "don't", "does not": "doesn't", "did not": "didn't",
+    "cannot": "can't", "can not": "can't", "is not": "isn't", "was not": "wasn't",
+    "will not": "won't", "i have": "i've", "i will": "i'll", "have not": "haven't",
+}
+
 # Phrases drivers use to wave the team off. Paired with high vocal strain these
 # are the tell that a problem is being under-reported.
 DOWNPLAY_TERMS = (
-    "i'm fine", "im fine", "it's fine", "its fine", "all good", "no problem",
-    "don't worry", "dont worry", "it's okay", "its okay", "i'm ok", "im ok",
-    "nothing", "forget it", "leave it",
+    "i'm fine", "it's fine", "all good", "no problem", "don't worry",
+    "it's okay", "i'm ok", "i'm okay", "forget it", "leave it", "never mind",
 )
+
+# First-person reports of hitting a limit. These are the driver telling you
+# directly that they are saturated, and they must be able to raise concern even
+# when the voice sounds composed.
+SELF_LIMIT_TERMS = (
+    "i can't", "i'm struggling", "struggling", "my neck", "i'm done",
+    "can't see", "can't hold", "can't keep", "losing it", "no energy",
+    "cramping", "cramp", "dizzy", "can't breathe", "i'm cooked", "too hot",
+    "exhausted", "can't take",
+)
+
+
+def _normalise(text: str) -> str:
+    lowered = " ".join(text.lower().split())
+    for expanded, contracted in CONTRACTIONS.items():
+        lowered = lowered.replace(expanded, contracted)
+    return lowered
+
+
+def text_signals(transcript: str) -> dict:
+    """Deterministic phrase signals. Kept free of the model so safety and
+    self-reports never depend on a probabilistic classifier."""
+    normalised = _normalise(transcript or "")
+    return {
+        "hazardTerms": [t for t in HAZARD_TERMS if t in normalised],
+        "downplaying": any(t in normalised for t in DOWNPLAY_TERMS),
+        "selfReportedLimit": any(t in normalised for t in SELF_LIMIT_TERMS),
+    }
 
 
 @lru_cache(maxsize=1)
@@ -43,10 +79,8 @@ def _classifier():
 
 def analyze(transcript: str) -> dict:
     text = (transcript or "").strip()
-    lowered = text.lower()
-
-    hazard_hits = [t for t in HAZARD_TERMS if t in lowered]
-    downplaying = any(t in lowered for t in DOWNPLAY_TERMS)
+    signals = text_signals(text)
+    hazard_hits = signals["hazardTerms"]
 
     if not text:
         return {
@@ -54,6 +88,7 @@ def analyze(transcript: str) -> dict:
             "intentConfidence": 0.0,
             "hazardTerms": [],
             "downplaying": False,
+            "selfReportedLimit": False,
             "priority": "Informational",
         }
 
@@ -67,8 +102,7 @@ def analyze(transcript: str) -> dict:
     return {
         "intent": intent,
         "intentConfidence": confidence,
-        "hazardTerms": hazard_hits,
-        "downplaying": downplaying,
+        **signals,
         "priority": "Critical" if hazard_hits else _priority(intent),
     }
 

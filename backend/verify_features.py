@@ -7,7 +7,7 @@ Run:  .venv\\Scripts\\python.exe verify_features.py
 """
 import numpy as np
 
-from services import advisor, analytics, state
+from services import advisor, analytics, content, state
 from services.features import extract, signal_quality
 
 SR = 16000
@@ -157,6 +157,44 @@ downplay = {"intent": "Acknowledgement", "priority": "Informational", "downplayi
 flags = advisor.advise(stressed, downplay, {})["flags"]
 check("tone/content mismatch is flagged",
       any(f["title"] == "Possible under-reporting" for f in flags))
+
+print("\n11. Phrase signals survive Whisper's expanded contractions")
+# These are verbatim transcripts that the contraction-only term list missed.
+whisper_downplay = "No it is fine. I am fine. Do not worry about it."
+whisper_limit = "I am really struggling now. My neck is gone and I cannot see the braking points."
+
+check("'it is fine / I am fine / do not worry' reads as downplaying",
+      content.text_signals(whisper_downplay)["downplaying"],
+      f'"{whisper_downplay}"')
+check("'I am struggling / I cannot see' reads as a self-reported limit",
+      content.text_signals(whisper_limit)["selfReportedLimit"],
+      f'"{whisper_limit}"')
+check("a neutral question is neither",
+      not any(content.text_signals("What is the gap to the car behind me right now?").values()))
+check("hazard terms still detected after normalisation",
+      content.text_signals("Yellow flag, yellow flag, there is a car in the wall at turn 7.")["hazardTerms"])
+
+print("\n12. A calm-sounding driver reporting a limit is not treated as free to chat")
+limit_content = {
+    "intent": "Physical strain", "priority": "Strategic",
+    "downplaying": False, "selfReportedLimit": True,
+}
+before = advisor.advise(calm, {**limit_content, "selfReportedLimit": False}, {})
+after = advisor.advise(calm, limit_content, {})
+
+print(f"    ignoring the words -> {before['radioWindow']:<8} \"{before['action']['headline']}\"")
+print(f"    acting on them     -> {after['radioWindow']:<8} \"{after['action']['headline']}\"")
+
+check("window escalates off Open", after["radioWindow"] == "Caution")
+check("word budget tightens", after["wordBudget"] < before["wordBudget"])
+check("no longer invites a full briefing", "anything complex" not in after["action"]["headline"])
+check("composed-but-reporting is flagged",
+      any(f["title"] == "Reported limit, composed voice" for f in after["flags"]))
+check("REGRESSION: safety still overrides a reported limit",
+      advisor.advise(calm, {**hazard, "selfReportedLimit": True}, {})["radioWindow"] == "Open")
+check("REGRESSION: calm + car problem still gets the debrief window",
+      advisor.advise(calm, {"intent": "Car problem", "priority": "Strategic",
+                            "downplaying": False, "selfReportedLimit": False}, {})["radioWindow"] == "Open")
 
 passed = sum(1 for r in RESULTS if r)
 print(f"\n{'=' * 62}\n  {passed}/{len(RESULTS)} checks passed\n{'=' * 62}")
