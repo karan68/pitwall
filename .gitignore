@@ -16,3 +16,5 @@ backend/sample_audio/real/
 frontend/dist/
 backend/sample_audio/openf1/
 backend/data/clips/
+
+backend/data/ablation_cache/

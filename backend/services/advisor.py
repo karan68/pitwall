@@ -42,22 +42,45 @@ def advise(driver_state: dict, content: dict, context: dict) -> dict:
     state = driver_state["state"]
     intent = content["intent"]
     priority = content["priority"]
+    calibrated = driver_state["calibrated"]
 
-    window, window_reason = _radio_window(state, load, priority, content.get("selfReportedLimit", False))
+    window, window_reason = _radio_window(
+        state, load, priority, content.get("selfReportedLimit", False), calibrated
+    )
     flags = _flags(driver_state, content, context)
 
     return {
         "radioWindow": window,
         "windowReason": window_reason,
         "wordBudget": WORD_BUDGET[window],
-        "action": _action(state, intent, content.get("selfReportedLimit", False)),
+        "action": _action(state, intent, content.get("selfReportedLimit", False), calibrated),
         "flags": flags,
     }
 
 
-def _radio_window(state: str, load: float, priority: str, self_reported_limit: bool) -> tuple[str, str]:
+def _radio_window(state: str, load: float, priority: str, self_reported_limit: bool,
+                  calibrated: bool = True) -> tuple[str, str]:
     if priority == "Critical":
         return "Open", "Safety-critical traffic always goes through, whatever the driver load."
+
+    # Without a personal baseline there is no deviation to report, and an
+    # uncalibrated reading is scored against population averages instead.
+    # Measured on real radio (ablate_baseline.py, Hamilton, Spa 2024): the same
+    # six clips read Tired at load 60-73 uncalibrated and Calm at load 50-54
+    # once the baseline was valid. The only power this tool has over an engineer
+    # is to *restrict* comms, so restricting on that reading is the failure that
+    # does harm. Uncalibrated therefore degrades to how the team already works.
+    if not calibrated:
+        if self_reported_limit:
+            return "Caution", (
+                "Driver has reported being at a limit. A first-hand report needs no baseline to be "
+                "credible, so this window is set on the driver's own words. Keep transmissions short."
+            )
+        return "Open", (
+            "No baseline for this driver yet, so no state has been established. Comms are left open "
+            "deliberately: the reading is against population averages and is not a basis for holding "
+            "a call back."
+        )
 
     if state == "Locked In":
         return "Closed", "Driver is performing at high effort. Interrupting costs more than the message gains."
@@ -79,7 +102,23 @@ def _radio_window(state: str, load: float, priority: str, self_reported_limit: b
     return "Open", "Driver has spare capacity. Good window for a full strategy briefing."
 
 
-def _action(state: str, intent: str, self_reported_limit: bool = False) -> dict:
+def _action(state: str, intent: str, self_reported_limit: bool = False,
+            calibrated: bool = True) -> dict:
+    if not calibrated:
+        # The words are still measured directly, so intent-driven advice survives;
+        # anything that depends on the voice deviating from normal does not.
+        if self_reported_limit:
+            return {
+                "headline": "Act on the report itself: acknowledge, then check hydration, temps and stint length.",
+                "rationale": "The driver stated a limit. That stands on its own without a voice baseline.",
+            }
+        return {
+            "headline": "No state call yet — collect baseline clips before using the readout.",
+            "rationale": "Until this driver has a baseline, the state label describes an average adult "
+            "voice rather than theirs, and the same audio can read Tired or Calm depending only on "
+            "how many calibration clips were accepted.",
+        }
+
     # A first-person report of hitting a limit is acted on whatever the voice did.
     if self_reported_limit and state in ("Calm", "Locked In"):
         return {
@@ -152,6 +191,34 @@ def _action(state: str, intent: str, self_reported_limit: bool = False) -> dict:
 
 def _flags(driver_state: dict, content: dict, context: dict) -> list[dict]:
     flags = []
+    calibrated = driver_state["calibrated"]
+
+    if not calibrated:
+        # Every flag below this point compares the voice to the driver's normal
+        # voice. With no baseline that comparison is against population averages,
+        # which measured out as a false "Tired" plus a false sustained-load
+        # warning on six consecutive real Hamilton calls. Say what is missing
+        # instead of raising warnings that the audio does not support.
+        flags.append(
+            {
+                "level": "warning",
+                "title": "Not calibrated — state readout is not usable",
+                "detail": "This driver has no baseline yet, so the reading is scored against population "
+                "averages rather than their own voice. On real radio the same clips moved from Tired to "
+                "Calm once a valid baseline existed. Comms advice is deliberately left open and "
+                "voice-based flags are suppressed until calibration completes.",
+            }
+        )
+        if content.get("selfReportedLimit"):
+            flags.append(
+                {
+                    "level": "warning",
+                    "title": "Driver reported a limit",
+                    "detail": "Taken from the words, not the voice, so it stands without a baseline. "
+                    "Act on the report.",
+                }
+            )
+        return flags
 
     # The signature finding of combining tone with content: the words say one
     # thing, the voice says another. It matters in both directions.
@@ -197,17 +264,7 @@ def _flags(driver_state: dict, content: dict, context: dict) -> list[dict]:
             }
         )
 
-    if not driver_state["calibrated"]:
-        flags.append(
-            {
-                "level": "info",
-                "title": "Not yet calibrated",
-                "detail": "Readings are against population averages, not this driver. Treat as indicative only.",
-            }
-        )
-
     return flags
-
 
 def compress(message: str, word_budget: int) -> dict:
     """Cut a message down to a radio brevity budget, keeping what is actionable."""
