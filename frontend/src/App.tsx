@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { addBaselineClip, analyzeClip, fetchSession, resetBaseline, resetSession } from "./api";
+import { addBaselineClip, analyzeClip, clipUrl, fetchSession, resetBaseline, resetSession } from "./api";
 import AdvisorPanel from "./components/AdvisorPanel";
 import DrivingCrossCheck from "./components/DrivingCrossCheck";
 import EngineerConsole from "./components/EngineerConsole";
@@ -173,6 +173,15 @@ function Transcript({ event }: { event: RadioEvent }) {
       <p className="mt-2 text-lg leading-snug text-neutral-100">
         {event.transcript || <span className="text-neutral-600">(no speech detected)</span>}
       </p>
+      {event.hasAudio && (
+        <audio
+          controls
+          preload="none"
+          src={clipUrl(event.id)}
+          className="mt-3 h-9 w-full"
+          title="The exact radio transmission this reading was taken from"
+        />
+      )}
       {!quality.usable && (
         <ul className="mt-2 list-disc pl-4 text-[11px] leading-relaxed text-amber-300/80">
           {quality.issues.map((issue) => (

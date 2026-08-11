@@ -48,6 +48,10 @@ export function voiceStatus() {
   return fetch(`${API_BASE}/api/voice/status`).then(unwrap<VoiceStatus>);
 }
 
+export function clipUrl(eventId: number) {
+  return `${API_BASE}/api/audio/${eventId}`;
+}
+
 export function createVoiceSession(eventId: number | null) {
   return fetch(`${API_BASE}/api/voice/session`, {
     method: "POST",

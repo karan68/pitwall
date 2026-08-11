@@ -1,11 +1,14 @@
 """PITWALL API — driver-state readings and the radio decisions that follow."""
 import json
+import shutil
 import time
 from pathlib import Path
 
+import soundfile as sf
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -17,6 +20,9 @@ from services.transcribe import transcribe  # noqa: E402
 
 STORE_PATH = Path(__file__).parent / "data" / "session.json"
 SEED_PATH = Path(__file__).parent / "data" / "seed_session.json"
+# Analysed clips are kept so the interface can play back the exact audio a
+# reading came from, rather than only claiming it was real.
+CLIPS_DIR = Path(__file__).parent / "data" / "clips"
 
 app = FastAPI(title="PITWALL API")
 
@@ -92,7 +98,17 @@ def reset_session():
     store = _read_store()
     store["events"] = []
     _write_store(store)
+    shutil.rmtree(CLIPS_DIR, ignore_errors=True)
     return _session_payload(store)
+
+
+@app.get("/api/audio/{event_id}")
+def get_clip(event_id: int):
+    """The exact audio this reading was taken from."""
+    clip = CLIPS_DIR / f"{event_id}.wav"
+    if not clip.exists():
+        raise HTTPException(404, "No stored audio for this radio call.")
+    return FileResponse(clip, media_type="audio/wav")
 
 
 @app.post("/api/baseline/reset")
@@ -169,6 +185,10 @@ async def analyze(file: UploadFile = File(...), lap: int | None = Form(None)):
         "recommendation": recommendation,
     }
     event["referenceDisagrees"] = event["reference"]["state"] != event["state"]
+
+    CLIPS_DIR.mkdir(parents=True, exist_ok=True)
+    sf.write(CLIPS_DIR / f"{event['id']}.wav", audio, sr)
+    event["hasAudio"] = True
 
     store["events"].append(event)
     _write_store(store)

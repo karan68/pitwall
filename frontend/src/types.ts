@@ -75,6 +75,7 @@ export interface RadioEvent {
   confidence: { level: string; reason: string };
   drivers: { feature: string; z: number; direction: string }[];
   recommendation: Recommendation;
+  hasAudio?: boolean;
   drivingRoughness?: number | null;
   drivingCrossCheck?: {
     status: "agree" | "voice-only" | "inputs-only" | "unavailable";

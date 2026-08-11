@@ -7,6 +7,9 @@ type Line = { role: "user" | "agent"; text: string; final: boolean };
 
 const PROMPTS = ["How is the driver?", "Can I talk to him?", "What should I say?", "Why do you think that?"];
 
+/** Punctuation and spacing drift between streamed segments, so compare on the words alone. */
+const squash = (text?: string) => (text ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
 /** The engineer's eyes are on the data — that is the whole premise of the problem.
  *  So the reading is also available hands-free, briefed on the call that is on screen. */
 export default function VoiceConsole({ event }: { event: RadioEvent | null }) {
@@ -60,10 +63,10 @@ export default function VoiceConsole({ event }: { event: RadioEvent | null }) {
         // in place; appending every emission stacks copies of the same sentence.
         setLines((prev) => {
           const last = prev[prev.length - 1];
+          const a = squash(last?.text);
+          const b = squash(t.text);
           const continues =
-            last &&
-            last.role === t.role &&
-            (!last.final || t.text.startsWith(last.text) || last.text.startsWith(t.text));
+            last && last.role === t.role && (!last.final || b.startsWith(a) || a.startsWith(b));
 
           const line = { role: t.role, text: t.text, final: t.final };
           return continues ? [...prev.slice(0, -1), line] : [...prev, line].slice(-8);
