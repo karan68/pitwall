@@ -106,7 +106,7 @@ export default function App() {
         </div>
       )}
 
-      <main className="mx-auto grid max-w-[1400px] gap-4 px-6 py-5 lg:grid-cols-2">
+      <main className="mx-auto grid max-w-[1400px] items-start gap-4 px-6 py-5 lg:grid-cols-2">
         <div className="flex flex-col gap-4">
           <RadioInput
             onAnalyze={handleAnalyze}
@@ -118,6 +118,8 @@ export default function App() {
 
           {selected && <Transcript event={selected} />}
           {selected && <AdvisorPanel event={selected} />}
+          {selected && <DrivingCrossCheck event={selected} />}
+          {selected && <ReferenceCompare event={selected} />}
           <EngineerConsole event={selected} />
           <VoiceConsole event={selected} />
         </div>
@@ -130,8 +132,6 @@ export default function App() {
           {analytics && <LoadLapChart analytics={analytics} events={session!.events} />}
           {analytics?.sufficientData && <CostSummary analytics={analytics} />}
           {session && <Provenance session={session.session} />}
-          {selected && <DrivingCrossCheck event={selected} />}
-          {selected && <ReferenceCompare event={selected} />}
         </div>
 
         <div className="lg:col-span-2">

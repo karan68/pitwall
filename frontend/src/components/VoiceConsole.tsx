@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { createVoiceSession, voiceStatus } from "../api";
 import type { RadioEvent } from "../types";
 
-type Line = { role: "user" | "agent"; text: string };
+type Line = { role: "user" | "agent"; text: string; final: boolean };
 
 const PROMPTS = ["How is the driver?", "Can I talk to him?", "What should I say?", "Why do you think that?"];
 
@@ -56,8 +56,18 @@ export default function VoiceConsole({ event }: { event: RadioEvent | null }) {
         if (typeof next === "object" && next.state === "ended") setLive(false);
       });
       session.on("transcript", (t: TranscriptEvent) => {
-        if (!t.final) return;
-        setLines((prev) => [...prev.slice(-7), { role: t.role, text: t.text }]);
+        // The SDK streams each utterance as a growing segment, so extend the line
+        // in place; appending every emission stacks copies of the same sentence.
+        setLines((prev) => {
+          const last = prev[prev.length - 1];
+          const continues =
+            last &&
+            last.role === t.role &&
+            (!last.final || t.text.startsWith(last.text) || last.text.startsWith(t.text));
+
+          const line = { role: t.role, text: t.text, final: t.final };
+          return continues ? [...prev.slice(0, -1), line] : [...prev, line].slice(-8);
+        });
       });
       session.on("error", (e) => setError(e.message));
 
@@ -164,7 +174,9 @@ export default function VoiceConsole({ event }: { event: RadioEvent | null }) {
                   <span className={line.role === "agent" ? "text-sky-400" : "text-neutral-500"}>
                     {line.role === "agent" ? "Pit wall" : "You"}
                   </span>
-                  <span className="text-neutral-300"> · {line.text}</span>
+                  <span className={line.final ? "text-neutral-300" : "text-neutral-500 italic"}>
+                    {" "}· {line.text}
+                  </span>
                 </p>
               ))}
             </div>
