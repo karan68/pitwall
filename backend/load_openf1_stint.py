@@ -20,6 +20,8 @@ from pathlib import Path
 
 import soundfile as sf
 
+from services.driving import lap_metrics
+
 BASE = "https://api.openf1.org/v1"
 OUT_ROOT = Path(__file__).parent / "sample_audio" / "openf1"
 
@@ -73,6 +75,38 @@ def reference_pace(laps: list[dict]) -> tuple[float, list[int]]:
     return (sum(racing) / len(racing) if racing else median), excluded
 
 
+def fetch_driver_inputs(key: int, driver: int, laps: list[dict]) -> dict[int, dict]:
+    """Slice the session's car telemetry into per-lap driver input metrics."""
+    if not laps:
+        return {}
+
+    samples = api(
+        "car_data",
+        session_key=key,
+        driver_number=driver,
+        **{"date>": laps[0]["date_start"]},
+    )
+    print(f"  {len(samples)} car telemetry samples")
+
+    stamped = sorted(
+        ((parse_time(s["date"]), s) for s in samples if s.get("date")), key=lambda pair: pair[0]
+    )
+
+    per_lap = {}
+    for lap in laps:
+        if not lap.get("date_start"):
+            continue
+        start = parse_time(lap["date_start"]).timestamp()
+        end = start + lap["lap_duration"]
+        window = [s for when, s in stamped if start <= when.timestamp() <= end]
+        metrics = lap_metrics(window, lap["lap_duration"])
+        if metrics:
+            per_lap[lap["lap_number"]] = metrics
+
+    print(f"  driver inputs derived for {len(per_lap)}/{len(laps)} laps")
+    return per_lap
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--year", type=int, default=2024)
@@ -108,6 +142,9 @@ def main() -> None:
     info = drivers.get(driver, {})
     name = info.get("full_name") or info.get("broadcast_name") or f"#{driver}"
 
+    print("\nFetching driver input telemetry")
+    inputs = fetch_driver_inputs(key, driver, laps)
+
     out_dir = OUT_ROOT / f"{key}_{driver}"
     out_dir.mkdir(parents=True, exist_ok=True)
     for stale in out_dir.glob("*.wav"):
@@ -123,6 +160,7 @@ def main() -> None:
                 "lap": lap["lap_number"],
                 "timeSeconds": round(lap["lap_duration"], 3),
                 "representative": lap["lap_duration"] <= pace * RACING_LAP_TOLERANCE,
+                "driving": inputs.get(lap["lap_number"]),
             }
             for lap in laps
         ],

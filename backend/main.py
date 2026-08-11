@@ -11,7 +11,7 @@ from pydantic import BaseModel
 
 load_dotenv(Path(__file__).parent / ".env")
 
-from services import advisor, analytics, briefing, content, features, omnidim, reference_model, state  # noqa: E402
+from services import advisor, analytics, briefing, content, driving, features, omnidim, reference_model, state  # noqa: E402
 from services.audio_utils import load_audio  # noqa: E402
 from services.transcribe import transcribe  # noqa: E402
 
@@ -40,11 +40,28 @@ def _write_store(store: dict) -> None:
 
 def _session_payload(store: dict) -> dict:
     baseline = state.build_baseline(store["baselineSamples"])
+    inputs = driving.score_stint(store["laps"])
+
+    events = store["events"]
+    if inputs["available"]:
+        roughness = inputs["roughnessByLap"]
+        events = [
+            {
+                **event,
+                "drivingRoughness": roughness.get(event["lap"]),
+                "drivingCrossCheck": driving.cross_check(
+                    event["driverLoad"], roughness.get(event["lap"])
+                ),
+            }
+            for event in events
+        ]
+
     return {
         "session": store["session"],
         "laps": store["laps"],
-        "events": store["events"],
+        "events": events,
         "baseline": baseline,
+        "driverInputs": inputs,
         "analytics": analytics.analyze(
             store["laps"], store["events"], store["session"]["referenceLapSeconds"]
         ),
@@ -189,7 +206,12 @@ def set_laps(series: LapSeries):
     """Replace the lap series, e.g. with real timing pulled from OpenF1."""
     store = _read_store()
     store["laps"] = [
-        {"lap": lap["lap"], "timeSeconds": lap["timeSeconds"]} for lap in series.laps
+        {
+            "lap": lap["lap"],
+            "timeSeconds": lap["timeSeconds"],
+            **({"driving": lap["driving"]} if lap.get("driving") else {}),
+        }
+        for lap in series.laps
     ]
     store["session"]["referenceLapSeconds"] = series.referenceLapSeconds
     _write_store(store)

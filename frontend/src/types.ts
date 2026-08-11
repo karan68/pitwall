@@ -75,6 +75,11 @@ export interface RadioEvent {
   confidence: { level: string; reason: string };
   drivers: { feature: string; z: number; direction: string }[];
   recommendation: Recommendation;
+  drivingRoughness?: number | null;
+  drivingCrossCheck?: {
+    status: "agree" | "voice-only" | "inputs-only" | "unavailable";
+    detail: string;
+  };
 }
 
 export interface Baseline {
@@ -120,6 +125,12 @@ export interface SessionPayload {
   events: RadioEvent[];
   baseline: Baseline;
   analytics: Analytics;
+  driverInputs?: {
+    available: boolean;
+    reason?: string;
+    lapsMeasured?: number;
+    roughnessByLap?: Record<string, number>;
+  };
   event?: RadioEvent;
 }
 

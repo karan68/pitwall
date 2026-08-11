@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { addBaselineClip, analyzeClip, fetchSession, resetBaseline, resetSession } from "./api";
 import AdvisorPanel from "./components/AdvisorPanel";
+import DrivingCrossCheck from "./components/DrivingCrossCheck";
 import EngineerConsole from "./components/EngineerConsole";
 import LoadLapChart from "./components/LoadLapChart";
 import Provenance from "./components/Provenance";
@@ -129,6 +130,7 @@ export default function App() {
           {analytics && <LoadLapChart analytics={analytics} events={session!.events} />}
           {analytics?.sufficientData && <CostSummary analytics={analytics} />}
           {session && <Provenance session={session.session} />}
+          {selected && <DrivingCrossCheck event={selected} />}
           {selected && <ReferenceCompare event={selected} />}
         </div>
 
