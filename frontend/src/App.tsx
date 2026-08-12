@@ -23,7 +23,11 @@ export default function App() {
 
   useEffect(() => {
     fetchSession()
-      .then(setSession)
+      .then((payload) => {
+        setSession(payload);
+        // Open on the latest call: an empty strip reads as a broken page.
+        setSelected(payload.events.at(-1) ?? null);
+      })
       .catch((e) => setError(e instanceof Error ? e.message : "Backend unreachable"));
   }, []);
 
