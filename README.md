@@ -345,6 +345,11 @@ Driver load is correlated against lap-time delta at lags of 0, 1 and 2 laps, and
 reported — that lag is the warning time the pit wall actually gets. Correlations are suppressed below
 five **measured** radio calls.
 
+Read this alongside the null result above, because the two can look like they disagree. A stint-level
+correlation is a *description of that stint*; the six-race test says it does not generalise (held-out
+R² −0.029, p = 0.68). So the seconds figure is the arithmetic of one stint, not a forecast, which is
+why the interface labels it "indicative, not a validated model" and why the number is small.
+
 ---
 
 ## Verification
