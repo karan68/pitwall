@@ -9,7 +9,7 @@ import soundfile as sf
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -83,10 +83,14 @@ def _session_payload(store: dict) -> dict:
         "session": store["session"],
         "laps": store["laps"],
         # Resolved against the disk on every read: the flag is stored when a clip is
-        # analysed, but a seeded deployment ships the readings without the audio, and
-        # a player that cannot play is worse than no player.
+        # analysed, but a seeded deployment ships the readings without the audio and
+        # falls back to the source URL, so a player is only offered when one plays.
         "events": [
-            {**event, "hasAudio": (CLIPS_DIR / f"{event['id']}.wav").exists()}
+            {
+                **event,
+                "hasAudio": (CLIPS_DIR / f"{event['id']}.wav").exists()
+                or bool(event.get("sourceUrl")),
+            }
             for event in events
         ],
         "baseline": baseline,
@@ -130,9 +134,16 @@ def reset_session():
 def get_clip(event_id: int):
     """The exact audio this reading was taken from."""
     clip = CLIPS_DIR / f"{event_id}.wav"
-    if not clip.exists():
-        raise HTTPException(404, "No stored audio for this radio call.")
-    return FileResponse(clip, media_type="audio/wav")
+    if clip.exists():
+        return FileResponse(clip, media_type="audio/wav")
+
+    # A seeded deployment ships the readings without the audio. Point at the
+    # public source the clip came from rather than redistribute it.
+    event = next((e for e in _read_store()["events"] if e["id"] == event_id), None)
+    if event and event.get("sourceUrl"):
+        return RedirectResponse(event["sourceUrl"])
+
+    raise HTTPException(404, "No stored audio for this radio call.")
 
 
 @app.post("/api/baseline/reset")

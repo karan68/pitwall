@@ -44,18 +44,35 @@ export default function App() {
     }
   }
 
-  const handleAnalyze = (file: File, lap?: number) =>
+  const handleAnalyze = (files: File[], startLap?: number) =>
     run(
-      () => analyzeClip(file, file.name, lap),
+      async () => {
+        // Sequential, not parallel: one CPU running Whisper, and each reading is
+        // scored against the stint the previous ones just extended.
+        let payload = null as SessionPayload | null;
+        for (const [index, file] of files.entries()) {
+          payload = await analyzeClip(
+            file,
+            file.name,
+            startLap === undefined ? undefined : startLap + index,
+          );
+        }
+        return payload!;
+      },
       (payload) => {
         setSession(payload);
         setSelected(payload.event ?? null);
+        if (files.length > 1) setNotice(`Analysed ${files.length} calls.`);
       },
     );
 
-  const handleCalibrate = (file: File) =>
+  const handleCalibrate = (files: File[]) =>
     run(
-      () => addBaselineClip(file, file.name),
+      async () => {
+        let payload = null as SessionPayload | null;
+        for (const file of files) payload = await addBaselineClip(file, file.name);
+        return payload!;
+      },
       (payload) => {
         setSession(payload);
         setNotice(

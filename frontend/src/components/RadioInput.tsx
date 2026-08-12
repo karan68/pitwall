@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
 
 interface Props {
-  onAnalyze: (file: File, lap?: number) => Promise<void>;
-  onCalibrate: (file: File) => Promise<void>;
+  onAnalyze: (files: File[], startLap?: number) => Promise<void>;
+  onCalibrate: (files: File[]) => Promise<void>;
   busy: boolean;
   baselineCount: number;
   samplesNeeded: number;
 }
 
 export default function RadioInput({ onAnalyze, onCalibrate, busy, baselineCount, samplesNeeded }: Props) {
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [lap, setLap] = useState("");
   const [recording, setRecording] = useState(false);
@@ -18,9 +18,11 @@ export default function RadioInput({ onAnalyze, onCalibrate, busy, baselineCount
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<BlobPart[]>([]);
 
-  function accept(next: File | null) {
-    setFile(next);
-    setAudioUrl(next ? URL.createObjectURL(next) : null);
+  function accept(next: File[]) {
+    // Filename order, so a stint exported as call_06..call_17 runs in sequence.
+    const ordered = [...next].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+    setFiles(ordered);
+    setAudioUrl(ordered.length === 1 ? URL.createObjectURL(ordered[0]) : null);
   }
 
   async function startRecording() {
@@ -32,7 +34,7 @@ export default function RadioInput({ onAnalyze, onCalibrate, busy, baselineCount
       recorder.ondataavailable = (e) => chunksRef.current.push(e.data);
       recorder.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        accept(new File([blob], `radio-${Date.now()}.webm`, { type: "audio/webm" }));
+        accept([new File([blob], `radio-${Date.now()}.webm`, { type: "audio/webm" })]);
         stream.getTracks().forEach((t) => t.stop());
       };
       recorder.start();
@@ -67,7 +69,8 @@ export default function RadioInput({ onAnalyze, onCalibrate, busy, baselineCount
         <input
           type="file"
           accept="audio/*"
-          onChange={(e) => accept(e.target.files?.[0] ?? null)}
+          multiple
+          onChange={(e) => accept(Array.from(e.target.files ?? []))}
           className="max-w-[220px] text-xs text-neutral-400 file:mr-2 file:rounded file:border-0 file:bg-neutral-800 file:px-3 file:py-1.5 file:text-xs file:text-neutral-200 hover:file:bg-neutral-700"
         />
         <button
@@ -81,16 +84,21 @@ export default function RadioInput({ onAnalyze, onCalibrate, busy, baselineCount
       </div>
 
       {audioUrl && <audio controls src={audioUrl} className="h-9 w-full" />}
+      {files.length > 1 && (
+        <p className="text-xs text-neutral-400">
+          {files.length} clips queued, in filename order: {files[0].name} → {files[files.length - 1].name}
+        </p>
+      )}
       {micError && <p className="text-xs text-red-400">{micError}</p>}
 
       <div className="flex flex-wrap items-center gap-2 border-t border-neutral-800 pt-4">
         <button
-          onClick={() => file && onCalibrate(file)}
-          disabled={!file || busy}
+          onClick={() => files.length && onCalibrate(files)}
+          disabled={!files.length || busy}
           className="rounded border border-neutral-700 px-3 py-1.5 text-xs font-medium text-neutral-300 hover:bg-neutral-800 disabled:opacity-40"
-          title="Register this clip as a calm reference for this driver"
+          title="Register these clips as calm references for this driver"
         >
-          Add to baseline
+          {files.length > 1 ? `Add ${files.length} to baseline` : "Add to baseline"}
         </button>
 
         <div className="ml-auto flex items-center gap-2">
@@ -99,15 +107,15 @@ export default function RadioInput({ onAnalyze, onCalibrate, busy, baselineCount
             min={1}
             value={lap}
             onChange={(e) => setLap(e.target.value)}
-            placeholder="Lap"
+            placeholder={files.length > 1 ? "1st lap" : "Lap"}
             className="w-16 rounded border border-neutral-700 bg-neutral-900 px-2 py-1.5 text-xs text-neutral-200"
           />
           <button
-            onClick={() => file && onAnalyze(file, lap.trim() ? Number(lap) : undefined)}
-            disabled={!file || busy}
+            onClick={() => files.length && onAnalyze(files, lap.trim() ? Number(lap) : undefined)}
+            disabled={!files.length || busy}
             className="rounded bg-red-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-red-500 disabled:opacity-40"
           >
-            {busy ? "Analysing…" : "Analyse call"}
+            {busy ? "Analysing…" : files.length > 1 ? `Analyse ${files.length} calls` : "Analyse call"}
           </button>
         </div>
       </div>

@@ -11,9 +11,9 @@ on CPU; no audio leaves the machine.
 
 **Live demo:** https://pitwall-jc45.onrender.com — opens on a real analysed stint (Piastri, Spa
 2024: 12 radio calls, 44 laps of real timing). It is read-only: a 512 MB free instance cannot hold
-Whisper, so uploading your own audio is refused with an explanation rather than crashing. Audio
-playback is unavailable there because no broadcast audio is redistributed in this repository. Free
-instances sleep, so the first load can take a minute.
+Whisper, so uploading your own audio is refused with an explanation rather than crashing. The audio
+still plays: no broadcast audio is redistributed here, so each call streams from the OpenF1
+recording it was taken from. Free instances sleep, so the first load can take a minute.
 
 **Read the transcripts in that demo before you read the numbers.** Several of those twelve calls are
 the *engineer* talking to Piastri — "Oscar, we're thinking plan B" — not Piastri talking. Broadcast
@@ -48,7 +48,12 @@ The useful output is not a mood label. It is a decision: **talk, or don't.**
 ### 1. Read the driver, and get a call you can act on
 
 Select any radio transmission. The strip gives load, state and the radio window; below it sits the
-recommended action and the exact transcript it came from.
+recommended action and the exact transcript it came from — with the original audio, so you can hear
+what was measured rather than take the number on trust.
+
+Load one clip, or select a whole folder of them: multiple files are queued in filename order and
+analysed in sequence, with the lap advancing per clip. That is how the twelve-call stint below was
+built, and `run_stint.py sample_audio\openf1\9574_81` does the same thing from the command line.
 
 ![Status strip, calm](docs/screenshots/02-status-strip-calm.png)
 
