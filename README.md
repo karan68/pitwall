@@ -1,14 +1,3 @@
----
-title: PITWALL - The Silent Co-Driver
-emoji: "\U0001F3CE"
-colorFrom: red
-colorTo: gray
-sdk: docker
-app_port: 7860
-pinned: false
-license: mit
----
-
 # PITWALL — The Silent Co-Driver
 
 **Grand Prix hackathon · Problem Statement 1 · Powered by Hugging Face**
@@ -429,14 +418,17 @@ baseline by more than 6 dB, the reading is marked Low confidence with the reason
 
 ## Running it
 
-### As one container (what a Hugging Face Space runs)
+### As one container (what the live demo runs)
 
 ```powershell
 docker build -t pitwall .
 docker run -p 7860:7860 pitwall
 ```
 
-The image builds the frontend, then serves it from the API — one process, one port.
+The image builds the frontend, then serves it from the API — one process, one port. It honours an
+injected `PORT`, so the same image runs on Render (see `render.yaml`) or any container host. Setting
+`PITWALL_DEMO_READONLY=1` makes the upload and reset routes refuse with an explanation instead of
+being OOM-killed, which is how the public demo survives a 512 MB instance without loading Whisper.
 
 ### For development
 
@@ -522,6 +514,7 @@ backend/
   load_real_radio.py            pull real F1 radio from Hugging Face
   load_openf1_stint.py          pull real radio + lap timing from OpenF1
   run_stint.py                  analyse a folder of clips, score ASR against ground truth
+  probe_*.py                    how each data source was vetted before it was trusted
 frontend/src/
   App.tsx                       layout and session state
   components/                   status strip, quadrant, charts, advisor, console, voice, provenance, log
