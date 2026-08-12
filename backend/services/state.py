@@ -17,17 +17,30 @@ import numpy as np
 # and one shouted call would wreck a mean/std baseline.
 _MAD_TO_SIGMA = 0.6745
 
-# Fallback spread used before a driver is calibrated, so an uncalibrated
-# reading degrades to "roughly typical adult speech" instead of dividing by zero.
+# Fallback centre and spread used before a driver is calibrated, so an
+# uncalibrated reading degrades to "typical for this kind of audio" instead of
+# dividing by zero.
+#
+# Measured, not guessed: median and MAD-derived sigma over 435 quality-gated real
+# F1 radio clips from six 2024 races (validate_at_scale.py). The earlier values
+# were textbook figures for clean adult speech in a quiet room, and every one of
+# the four strain features was wrong in the direction that inflates strain on
+# radio - jitter 1.6 against a real 3.8, shimmer 9.0 against 14.4, HNR 8.0
+# against 3.4, pauses 0.45 against 0.62. An ordinary transmission therefore read
+# as strained, which is exactly how six uncalibrated Hamilton calls came out
+# "Tired" at load 60-73 in ablate_baseline.py.
 POPULATION_PRIORS = {
-    "f0MeanHz": (145.0, 35.0),
-    "energyDb": (-14.0, 6.0),
+    "f0MeanHz": (137.3, 26.7),
+    "energyDb": (-17.6, 5.0),
+    # Not measured with the others: that collection ran no ASR, so word count and
+    # therefore articulation rate were zero for every clip. A zero spread here
+    # would divide the arousal axis by ~0. Still the clean-speech figure.
     "articulationRate": (3.4, 1.0),
-    "highFreqRatio": (0.22, 0.10),
-    "jitterPct": (1.6, 0.9),
-    "shimmerPct": (9.0, 4.0),
-    "hnrDb": (8.0, 4.0),
-    "pauseRatio": (0.45, 0.15),
+    "highFreqRatio": (0.152, 0.095),
+    "jitterPct": (3.83, 1.56),
+    "shimmerPct": (14.37, 2.88),
+    "hnrDb": (3.4, 1.33),
+    "pauseRatio": (0.616, 0.123),
 }
 
 AROUSAL_FEATURES = {
