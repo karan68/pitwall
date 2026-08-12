@@ -20,6 +20,11 @@ and in how many words.
 Runs on **real Formula 1 team radio** paired with **real lap timing**. Every model runs locally
 on CPU; no audio leaves the machine.
 
+**Live demo:** https://pitwall-jc45.onrender.com — opens on a real analysed stint (Piastri, Spa
+2024: 12 radio calls, 44 laps of real timing). It is read-only: a 512 MB free instance cannot hold
+Whisper, so uploading your own audio is refused with an explanation rather than crashing. Free
+instances sleep, so the first load can take a minute.
+
 **Source:** https://github.com/karan68/pitwall
 
 ![PITWALL dashboard](docs/screenshots/01-dashboard.png)

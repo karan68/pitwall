@@ -54,9 +54,10 @@ def _refuse_if_readonly() -> None:
     if DEMO_READONLY:
         raise HTTPException(
             503,
-            "This public demo runs on a small free instance that cannot load the speech models. "
-            "Every stored radio call is fully explorable, including the evidence behind it. "
-            "To analyse your own audio, run it locally: https://github.com/karan68/pitwall",
+            "Read-only public demo. The seeded Spa 2024 stint is fully explorable — every call, "
+            "its evidence and the advice — but it cannot be modified or added to here, because a "
+            "512 MB free instance cannot hold the speech models. To analyse your own audio, run "
+            "it locally: https://github.com/karan68/pitwall",
         )
 
 
@@ -111,6 +112,7 @@ def get_session():
 
 @app.post("/api/session/reset")
 def reset_session():
+    _refuse_if_readonly()
     store = _read_store()
     store["events"] = []
     _write_store(store)
@@ -129,6 +131,7 @@ def get_clip(event_id: int):
 
 @app.post("/api/baseline/reset")
 def reset_baseline():
+    _refuse_if_readonly()
     store = _read_store()
     store["baselineSamples"] = []
     _write_store(store)
