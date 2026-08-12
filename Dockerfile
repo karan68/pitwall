@@ -26,8 +26,10 @@ COPY --from=frontend /build/dist ./frontend/dist
 
 # /tmp is writable on a free Space; /data only exists with persistent storage.
 ENV HF_HOME=/tmp/huggingface \
-    PITWALL_ASR_MODEL=openai/whisper-small.en
+    PITWALL_ASR_MODEL=openai/whisper-small.en \
+    PORT=7860
 
 EXPOSE 7860
 WORKDIR /app/backend
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+# Shell form so an injected PORT is honoured; Spaces uses 7860, Render sets its own.
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT}

@@ -1,5 +1,6 @@
 """PITWALL API — driver-state readings and the radio decisions that follow."""
 import json
+import os
 import shutil
 import time
 from pathlib import Path
@@ -24,6 +25,11 @@ SEED_PATH = Path(__file__).parent / "data" / "seed_session.json"
 # reading came from, rather than only claiming it was real.
 CLIPS_DIR = Path(__file__).parent / "data" / "clips"
 
+# The public demo runs on a 512 MB instance, which can serve the seeded stint but
+# cannot hold Whisper in memory. Refuse uploads with an explanation rather than
+# let the process be OOM-killed mid-request.
+DEMO_READONLY = os.getenv("PITWALL_DEMO_READONLY") == "1"
+
 app = FastAPI(title="PITWALL API")
 
 app.add_middleware(
@@ -42,6 +48,16 @@ def _read_store() -> dict:
 
 def _write_store(store: dict) -> None:
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _refuse_if_readonly() -> None:
+    if DEMO_READONLY:
+        raise HTTPException(
+            503,
+            "This public demo runs on a small free instance that cannot load the speech models. "
+            "Every stored radio call is fully explorable, including the evidence behind it. "
+            "To analyse your own audio, run it locally: https://github.com/karan68/pitwall",
+        )
 
 
 def _session_payload(store: dict) -> dict:
@@ -122,6 +138,7 @@ def reset_baseline():
 @app.post("/api/baseline")
 async def add_baseline(file: UploadFile = File(...)):
     """Register a calm reference clip so later calls are scored against this driver."""
+    _refuse_if_readonly()
     audio, sr = _decode(await file.read())
 
     quality = features.signal_quality(audio, sr)
@@ -143,6 +160,7 @@ async def add_baseline(file: UploadFile = File(...)):
 
 @app.post("/api/analyze")
 async def analyze(file: UploadFile = File(...), lap: int | None = Form(None)):
+    _refuse_if_readonly()
     audio, sr = _decode(await file.read())
 
     quality = features.signal_quality(audio, sr)

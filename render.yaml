@@ -1,0 +1,16 @@
+# Render blueprint for the public demo.
+#
+# The free instance has 512 MB of RAM, which is enough to serve the seeded Spa
+# 2024 stint and everything derived from it, but not enough to hold Whisper.
+# PITWALL_DEMO_READONLY makes the upload endpoints refuse with an explanation
+# instead of being OOM-killed mid-request.
+services:
+  - type: web
+    name: pitwall
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: PITWALL_DEMO_READONLY
+        value: "1"
