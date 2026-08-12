@@ -120,8 +120,11 @@ export default function VoiceConsole({ event }: { event: RadioEvent | null }) {
 
       {available === false ? (
         <p className="text-xs leading-relaxed text-neutral-500">
-          Set <code className="text-neutral-400">OMNIDIM_API_KEY</code> in <code className="text-neutral-400">backend/.env</code> to
-          enable the hands-free agent.
+          Hands-free agent is off because no{" "}
+          <code className="text-neutral-400">OMNIDIM_API_KEY</code> is set. Everything else on this
+          page works without it. Running locally, put it in{" "}
+          <code className="text-neutral-400">backend/.env</code>; on a hosted deployment, set it as
+          an environment variable.
         </p>
       ) : (
         <>
