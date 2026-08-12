@@ -11,8 +11,15 @@ on CPU; no audio leaves the machine.
 
 **Live demo:** https://pitwall-jc45.onrender.com — opens on a real analysed stint (Piastri, Spa
 2024: 12 radio calls, 44 laps of real timing). It is read-only: a 512 MB free instance cannot hold
-Whisper, so uploading your own audio is refused with an explanation rather than crashing. Free
+Whisper, so uploading your own audio is refused with an explanation rather than crashing. Audio
+playback is unavailable there because no broadcast audio is redistributed in this repository. Free
 instances sleep, so the first load can take a minute.
+
+**Read the transcripts in that demo before you read the numbers.** Several of those twelve calls are
+the *engineer* talking to Piastri — "Oscar, we're thinking plan B" — not Piastri talking. Broadcast
+team radio is one mixed channel, so a reading describes the transmission, not the driver in
+isolation. That is the project's central limitation, it is stated on screen under Data provenance,
+and three separate attempts to fix it are documented below with the numbers that killed each one.
 
 **Source:** https://github.com/karan68/pitwall
 

@@ -82,7 +82,13 @@ def _session_payload(store: dict) -> dict:
     return {
         "session": store["session"],
         "laps": store["laps"],
-        "events": events,
+        # Resolved against the disk on every read: the flag is stored when a clip is
+        # analysed, but a seeded deployment ships the readings without the audio, and
+        # a player that cannot play is worse than no player.
+        "events": [
+            {**event, "hasAudio": (CLIPS_DIR / f"{event['id']}.wav").exists()}
+            for event in events
+        ],
         "baseline": baseline,
         "driverInputs": inputs,
         "analytics": analytics.analyze(

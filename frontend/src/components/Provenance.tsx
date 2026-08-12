@@ -10,6 +10,16 @@ export default function Provenance({ session }: { session: SessionPayload["sessi
     { label: "Radio audio", value: provenance.audio, real: !/synthetic|not set/i.test(provenance.audio) },
     { label: "Transcripts", value: provenance.transcripts, real: true },
     { label: "Lap times", value: provenance.lapTimes, real: !/synthetic|illustrative/i.test(provenance.lapTimes) },
+    // The transcript sits on screen beside the reading, so a viewer can see for
+    // themselves that many calls are the engineer. Say it before they notice it.
+    {
+      label: "Whose voice",
+      value:
+        "Broadcast team radio is one mixed channel. Many transmissions are the engineer speaking, " +
+        "and some carry both voices in a single clip, so a reading describes the transmission rather " +
+        "than the driver alone. Three attempts to separate the two were measured and all failed.",
+      real: false,
+    },
   ];
 
   return (
