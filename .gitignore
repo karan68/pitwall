@@ -18,3 +18,4 @@ backend/sample_audio/openf1/
 backend/data/clips/
 
 backend/data/ablation_cache/
+backend/data/diarize_cache/
