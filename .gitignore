@@ -19,3 +19,4 @@ backend/data/clips/
 
 backend/data/ablation_cache/
 backend/data/diarize_cache/
+backend/data/validation_rows.json
