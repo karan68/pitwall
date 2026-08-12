@@ -1,37 +1,1786 @@
 {
   "session": {
-    "driver": "Driver",
-    "team": "",
-    "stint": "Session",
-    "referenceLapSeconds": 92.4,
+    "driver": "#81 Oscar PIASTRI",
+    "team": "#81 Oscar PIASTRI",
+    "stint": "OpenF1 session 9574 (Belgium 2024)",
+    "referenceLapSeconds": 109.062,
     "provenance": {
-      "audio": "Not set",
-      "transcripts": "Whisper, local",
-      "lapTimes": "Synthetic \u2014 illustrative only"
+      "audio": "Real broadcast radio — OpenF1 session 9574 (Belgium 2024)",
+      "transcripts": "Whisper small.en running locally",
+      "lapTimes": "Real — OpenF1 timing for this driver and session, reference pace 109.062s"
     }
   },
   "laps": [
-    { "lap": 1, "timeSeconds": 94.8 },
-    { "lap": 2, "timeSeconds": 93.1 },
-    { "lap": 3, "timeSeconds": 92.6 },
-    { "lap": 4, "timeSeconds": 92.3 },
-    { "lap": 5, "timeSeconds": 92.5 },
-    { "lap": 6, "timeSeconds": 92.2 },
-    { "lap": 7, "timeSeconds": 92.9 },
-    { "lap": 8, "timeSeconds": 93.4 },
-    { "lap": 9, "timeSeconds": 94.6 },
-    { "lap": 10, "timeSeconds": 95.3 },
-    { "lap": 11, "timeSeconds": 94.9 },
-    { "lap": 12, "timeSeconds": 93.7 },
-    { "lap": 13, "timeSeconds": 92.8 },
-    { "lap": 14, "timeSeconds": 92.4 },
-    { "lap": 15, "timeSeconds": 92.6 },
-    { "lap": 16, "timeSeconds": 93.2 },
-    { "lap": 17, "timeSeconds": 93.9 },
-    { "lap": 18, "timeSeconds": 94.4 },
-    { "lap": 19, "timeSeconds": 94.1 },
-    { "lap": 20, "timeSeconds": 93.5 }
+    {
+      "lap": 1,
+      "timeSeconds": 114.768,
+      "driving": {
+        "throttleLiftsPerMin": 6.27,
+        "brakeApplicationsPerMin": 5.23,
+        "throttleChatter": 5.69,
+        "meanThrottlePct": 65.0,
+        "sampleCount": 415
+      }
+    },
+    {
+      "lap": 2,
+      "timeSeconds": 110.164,
+      "driving": {
+        "throttleLiftsPerMin": 5.45,
+        "brakeApplicationsPerMin": 4.36,
+        "throttleChatter": 5.0,
+        "meanThrottlePct": 67.7,
+        "sampleCount": 409
+      }
+    },
+    {
+      "lap": 3,
+      "timeSeconds": 109.971,
+      "driving": {
+        "throttleLiftsPerMin": 5.46,
+        "brakeApplicationsPerMin": 4.36,
+        "throttleChatter": 4.84,
+        "meanThrottlePct": 68.1,
+        "sampleCount": 404
+      }
+    },
+    {
+      "lap": 4,
+      "timeSeconds": 109.847,
+      "driving": {
+        "throttleLiftsPerMin": 6.01,
+        "brakeApplicationsPerMin": 4.37,
+        "throttleChatter": 4.88,
+        "meanThrottlePct": 67.9,
+        "sampleCount": 421
+      }
+    },
+    {
+      "lap": 5,
+      "timeSeconds": 110.085,
+      "driving": {
+        "throttleLiftsPerMin": 6.0,
+        "brakeApplicationsPerMin": 4.36,
+        "throttleChatter": 4.98,
+        "meanThrottlePct": 69.2,
+        "sampleCount": 413
+      }
+    },
+    {
+      "lap": 6,
+      "timeSeconds": 109.963,
+      "driving": {
+        "throttleLiftsPerMin": 6.0,
+        "brakeApplicationsPerMin": 4.37,
+        "throttleChatter": 4.98,
+        "meanThrottlePct": 68.6,
+        "sampleCount": 409
+      }
+    },
+    {
+      "lap": 7,
+      "timeSeconds": 110.03,
+      "driving": {
+        "throttleLiftsPerMin": 5.45,
+        "brakeApplicationsPerMin": 4.36,
+        "throttleChatter": 4.73,
+        "meanThrottlePct": 69.3,
+        "sampleCount": 423
+      }
+    },
+    {
+      "lap": 8,
+      "timeSeconds": 110.062,
+      "driving": {
+        "throttleLiftsPerMin": 5.45,
+        "brakeApplicationsPerMin": 4.36,
+        "throttleChatter": 4.79,
+        "meanThrottlePct": 69.3,
+        "sampleCount": 416
+      }
+    },
+    {
+      "lap": 9,
+      "timeSeconds": 110.481,
+      "driving": {
+        "throttleLiftsPerMin": 5.43,
+        "brakeApplicationsPerMin": 4.34,
+        "throttleChatter": 4.74,
+        "meanThrottlePct": 70.8,
+        "sampleCount": 418
+      }
+    },
+    {
+      "lap": 10,
+      "timeSeconds": 110.045,
+      "driving": {
+        "throttleLiftsPerMin": 5.45,
+        "brakeApplicationsPerMin": 4.36,
+        "throttleChatter": 4.9,
+        "meanThrottlePct": 67.8,
+        "sampleCount": 405
+      }
+    },
+    {
+      "lap": 11,
+      "timeSeconds": 114.271,
+      "driving": {
+        "throttleLiftsPerMin": 6.83,
+        "brakeApplicationsPerMin": 5.25,
+        "throttleChatter": 5.15,
+        "meanThrottlePct": 66.1,
+        "sampleCount": 427
+      }
+    },
+    {
+      "lap": 12,
+      "timeSeconds": 123.103,
+      "driving": {
+        "throttleLiftsPerMin": 5.85,
+        "brakeApplicationsPerMin": 4.87,
+        "throttleChatter": 4.68,
+        "meanThrottlePct": 62.4,
+        "sampleCount": 455
+      }
+    },
+    {
+      "lap": 13,
+      "timeSeconds": 107.565,
+      "driving": {
+        "throttleLiftsPerMin": 6.14,
+        "brakeApplicationsPerMin": 4.46,
+        "throttleChatter": 5.36,
+        "meanThrottlePct": 69.5,
+        "sampleCount": 394
+      }
+    },
+    {
+      "lap": 14,
+      "timeSeconds": 108.239,
+      "driving": {
+        "throttleLiftsPerMin": 5.54,
+        "brakeApplicationsPerMin": 4.43,
+        "throttleChatter": 4.89,
+        "meanThrottlePct": 69.5,
+        "sampleCount": 417
+      }
+    },
+    {
+      "lap": 15,
+      "timeSeconds": 108.07,
+      "driving": {
+        "throttleLiftsPerMin": 5.55,
+        "brakeApplicationsPerMin": 4.44,
+        "throttleChatter": 5.04,
+        "meanThrottlePct": 68.3,
+        "sampleCount": 395
+      }
+    },
+    {
+      "lap": 16,
+      "timeSeconds": 108.355,
+      "driving": {
+        "throttleLiftsPerMin": 5.54,
+        "brakeApplicationsPerMin": 3.88,
+        "throttleChatter": 4.87,
+        "meanThrottlePct": 69.3,
+        "sampleCount": 403
+      }
+    },
+    {
+      "lap": 17,
+      "timeSeconds": 108.473,
+      "driving": {
+        "throttleLiftsPerMin": 4.98,
+        "brakeApplicationsPerMin": 4.43,
+        "throttleChatter": 4.87,
+        "meanThrottlePct": 68.4,
+        "sampleCount": 403
+      }
+    },
+    {
+      "lap": 18,
+      "timeSeconds": 108.153,
+      "driving": {
+        "throttleLiftsPerMin": 5.55,
+        "brakeApplicationsPerMin": 4.44,
+        "throttleChatter": 5.12,
+        "meanThrottlePct": 69.0,
+        "sampleCount": 398
+      }
+    },
+    {
+      "lap": 19,
+      "timeSeconds": 108.233,
+      "driving": {
+        "throttleLiftsPerMin": 4.99,
+        "brakeApplicationsPerMin": 4.43,
+        "throttleChatter": 4.83,
+        "meanThrottlePct": 68.9,
+        "sampleCount": 407
+      }
+    },
+    {
+      "lap": 20,
+      "timeSeconds": 108.175,
+      "driving": {
+        "throttleLiftsPerMin": 5.55,
+        "brakeApplicationsPerMin": 4.44,
+        "throttleChatter": 5.09,
+        "meanThrottlePct": 68.2,
+        "sampleCount": 397
+      }
+    },
+    {
+      "lap": 21,
+      "timeSeconds": 108.376,
+      "driving": {
+        "throttleLiftsPerMin": 6.09,
+        "brakeApplicationsPerMin": 4.43,
+        "throttleChatter": 5.01,
+        "meanThrottlePct": 69.5,
+        "sampleCount": 410
+      }
+    },
+    {
+      "lap": 22,
+      "timeSeconds": 108.179,
+      "driving": {
+        "throttleLiftsPerMin": 4.99,
+        "brakeApplicationsPerMin": 4.44,
+        "throttleChatter": 4.8,
+        "meanThrottlePct": 67.9,
+        "sampleCount": 399
+      }
+    },
+    {
+      "lap": 23,
+      "timeSeconds": 108.352,
+      "driving": {
+        "throttleLiftsPerMin": 5.54,
+        "brakeApplicationsPerMin": 4.43,
+        "throttleChatter": 4.7,
+        "meanThrottlePct": 69.0,
+        "sampleCount": 422
+      }
+    },
+    {
+      "lap": 24,
+      "timeSeconds": 108.163,
+      "driving": {
+        "throttleLiftsPerMin": 5.55,
+        "brakeApplicationsPerMin": 4.44,
+        "throttleChatter": 4.98,
+        "meanThrottlePct": 67.9,
+        "sampleCount": 408
+      }
+    },
+    {
+      "lap": 25,
+      "timeSeconds": 107.98,
+      "driving": {
+        "throttleLiftsPerMin": 5.56,
+        "brakeApplicationsPerMin": 4.45,
+        "throttleChatter": 4.74,
+        "meanThrottlePct": 67.8,
+        "sampleCount": 410
+      }
+    },
+    {
+      "lap": 26,
+      "timeSeconds": 107.519,
+      "driving": {
+        "throttleLiftsPerMin": 5.58,
+        "brakeApplicationsPerMin": 4.46,
+        "throttleChatter": 5.05,
+        "meanThrottlePct": 70.4,
+        "sampleCount": 396
+      }
+    },
+    {
+      "lap": 27,
+      "timeSeconds": 107.024,
+      "driving": {
+        "throttleLiftsPerMin": 5.61,
+        "brakeApplicationsPerMin": 4.48,
+        "throttleChatter": 4.88,
+        "meanThrottlePct": 70.5,
+        "sampleCount": 396
+      }
+    },
+    {
+      "lap": 28,
+      "timeSeconds": 107.609,
+      "driving": {
+        "throttleLiftsPerMin": 6.13,
+        "brakeApplicationsPerMin": 4.46,
+        "throttleChatter": 4.85,
+        "meanThrottlePct": 69.3,
+        "sampleCount": 410
+      }
+    },
+    {
+      "lap": 29,
+      "timeSeconds": 107.653,
+      "driving": {
+        "throttleLiftsPerMin": 5.57,
+        "brakeApplicationsPerMin": 4.46,
+        "throttleChatter": 4.79,
+        "meanThrottlePct": 70.8,
+        "sampleCount": 412
+      }
+    },
+    {
+      "lap": 30,
+      "timeSeconds": 111.738,
+      "driving": {
+        "throttleLiftsPerMin": 5.91,
+        "brakeApplicationsPerMin": 5.37,
+        "throttleChatter": 5.04,
+        "meanThrottlePct": 67.4,
+        "sampleCount": 424
+      }
+    },
+    {
+      "lap": 31,
+      "timeSeconds": 121.424,
+      "driving": {
+        "throttleLiftsPerMin": 5.93,
+        "brakeApplicationsPerMin": 3.95,
+        "throttleChatter": 4.54,
+        "meanThrottlePct": 65.9,
+        "sampleCount": 461
+      }
+    },
+    {
+      "lap": 32,
+      "timeSeconds": 105.84,
+      "driving": {
+        "throttleLiftsPerMin": 6.24,
+        "brakeApplicationsPerMin": 3.97,
+        "throttleChatter": 5.04,
+        "meanThrottlePct": 70.4,
+        "sampleCount": 401
+      }
+    },
+    {
+      "lap": 33,
+      "timeSeconds": 106.265,
+      "driving": {
+        "throttleLiftsPerMin": 5.65,
+        "brakeApplicationsPerMin": 3.95,
+        "throttleChatter": 4.97,
+        "meanThrottlePct": 70.0,
+        "sampleCount": 395
+      }
+    },
+    {
+      "lap": 34,
+      "timeSeconds": 106.528,
+      "driving": {
+        "throttleLiftsPerMin": 6.2,
+        "brakeApplicationsPerMin": 4.51,
+        "throttleChatter": 5.14,
+        "meanThrottlePct": 70.1,
+        "sampleCount": 394
+      }
+    },
+    {
+      "lap": 35,
+      "timeSeconds": 108.312,
+      "driving": {
+        "throttleLiftsPerMin": 5.54,
+        "brakeApplicationsPerMin": 4.99,
+        "throttleChatter": 5.03,
+        "meanThrottlePct": 69.4,
+        "sampleCount": 408
+      }
+    },
+    {
+      "lap": 36,
+      "timeSeconds": 107.179,
+      "driving": {
+        "throttleLiftsPerMin": 5.6,
+        "brakeApplicationsPerMin": 4.48,
+        "throttleChatter": 5.14,
+        "meanThrottlePct": 70.8,
+        "sampleCount": 397
+      }
+    },
+    {
+      "lap": 37,
+      "timeSeconds": 107.136,
+      "driving": {
+        "throttleLiftsPerMin": 6.16,
+        "brakeApplicationsPerMin": 3.92,
+        "throttleChatter": 5.02,
+        "meanThrottlePct": 69.7,
+        "sampleCount": 397
+      }
+    },
+    {
+      "lap": 38,
+      "timeSeconds": 106.648,
+      "driving": {
+        "throttleLiftsPerMin": 6.19,
+        "brakeApplicationsPerMin": 3.94,
+        "throttleChatter": 5.02,
+        "meanThrottlePct": 70.8,
+        "sampleCount": 402
+      }
+    },
+    {
+      "lap": 39,
+      "timeSeconds": 106.445,
+      "driving": {
+        "throttleLiftsPerMin": 5.64,
+        "brakeApplicationsPerMin": 3.95,
+        "throttleChatter": 4.87,
+        "meanThrottlePct": 69.9,
+        "sampleCount": 407
+      }
+    },
+    {
+      "lap": 40,
+      "timeSeconds": 106.409,
+      "driving": {
+        "throttleLiftsPerMin": 5.64,
+        "brakeApplicationsPerMin": 3.95,
+        "throttleChatter": 5.05,
+        "meanThrottlePct": 71.3,
+        "sampleCount": 402
+      }
+    },
+    {
+      "lap": 41,
+      "timeSeconds": 106.39,
+      "driving": {
+        "throttleLiftsPerMin": 5.64,
+        "brakeApplicationsPerMin": 3.95,
+        "throttleChatter": 4.89,
+        "meanThrottlePct": 70.3,
+        "sampleCount": 401
+      }
+    },
+    {
+      "lap": 42,
+      "timeSeconds": 106.262,
+      "driving": {
+        "throttleLiftsPerMin": 5.65,
+        "brakeApplicationsPerMin": 3.95,
+        "throttleChatter": 5.06,
+        "meanThrottlePct": 70.9,
+        "sampleCount": 392
+      }
+    },
+    {
+      "lap": 43,
+      "timeSeconds": 106.621,
+      "driving": {
+        "throttleLiftsPerMin": 6.19,
+        "brakeApplicationsPerMin": 4.5,
+        "throttleChatter": 4.82,
+        "meanThrottlePct": 68.8,
+        "sampleCount": 415
+      }
+    },
+    {
+      "lap": 44,
+      "timeSeconds": 106.628,
+      "driving": {
+        "throttleLiftsPerMin": 6.19,
+        "brakeApplicationsPerMin": 4.5,
+        "throttleChatter": 5.24,
+        "meanThrottlePct": 69.2,
+        "sampleCount": 390
+      }
+    }
   ],
-  "events": [],
-  "baselineSamples": []
+  "events": [
+    {
+      "id": 1786513418955,
+      "lap": 20,
+      "fileName": "call_06.wav",
+      "transcript": "ACS button press ACS. Oscar, how would this tyre be at safety car restart? It'd be okay.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 22.4,
+        "peakLevel": 0.638,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.222,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 9.89,
+        "f0MeanHz": 141.6,
+        "f0StdHz": 20.9,
+        "energyDb": -12.7,
+        "jitterPct": 3.57,
+        "shimmerPct": 10.97,
+        "hnrDb": 3.5,
+        "highFreqRatio": 0.182,
+        "pauseRatio": 0.577,
+        "voicedRatio": 0.222,
+        "articulationRate": 4.08
+      },
+      "content": {
+        "intent": "Hazard",
+        "intentConfidence": 100.0,
+        "hazardTerms": [
+          "safety car"
+        ],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Critical"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 57.7,
+        "breakdown": {
+          "neutral": 57.7,
+          "happy": 38.9,
+          "angry": 3.3,
+          "sad": 0.1
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": -0.24,
+      "strain": -0.23,
+      "driverLoad": 46.2,
+      "zScores": {
+        "f0MeanHz": 0.62,
+        "energyDb": 0.96,
+        "articulationRate": -1.18,
+        "highFreqRatio": -0.09,
+        "jitterPct": -0.16,
+        "shimmerPct": -0.52,
+        "hnrDb": 0.41,
+        "pauseRatio": 0.36
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Medium",
+        "reason": "Reading sits close to this driver's normal voice."
+      },
+      "drivers": [
+        {
+          "feature": "speech rate",
+          "z": -1.18,
+          "direction": "below"
+        },
+        {
+          "feature": "loudness",
+          "z": 0.96,
+          "direction": "above"
+        },
+        {
+          "feature": "pitch",
+          "z": 0.62,
+          "direction": "above"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Safety-critical traffic always goes through, whatever the driver load.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513423685,
+      "lap": 23,
+      "fileName": "call_07.wav",
+      "transcript": "Oscar, we're thinking plan B, thinking plan B here.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 39.2,
+        "peakLevel": 0.397,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.358,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 4.08,
+        "f0MeanHz": 113.5,
+        "f0StdHz": 21.6,
+        "energyDb": -19.6,
+        "jitterPct": 3.56,
+        "shimmerPct": 15.47,
+        "hnrDb": 2.0,
+        "highFreqRatio": 0.134,
+        "pauseRatio": 0.501,
+        "voicedRatio": 0.358,
+        "articulationRate": 4.46
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 73.5,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 96.8,
+        "breakdown": {
+          "neutral": 96.8,
+          "happy": 2.4,
+          "angry": 0.7,
+          "sad": 0.0
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": -0.9,
+      "strain": 0.14,
+      "driverLoad": 44.8,
+      "zScores": {
+        "f0MeanHz": -1.48,
+        "energyDb": -1.8,
+        "articulationRate": -0.56,
+        "highFreqRatio": -0.51,
+        "jitterPct": -0.16,
+        "shimmerPct": 0.29,
+        "hnrDb": -0.62,
+        "pauseRatio": -0.36
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 17 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "loudness",
+          "z": -1.8,
+          "direction": "below"
+        },
+        {
+          "feature": "pitch",
+          "z": -1.48,
+          "direction": "below"
+        },
+        {
+          "feature": "voice clarity",
+          "z": -0.62,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513426982,
+      "lap": 23,
+      "fileName": "call_08.wav",
+      "transcript": "I'll speed back on this prior when you can.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 14.5,
+        "peakLevel": 0.634,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.159,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 10.44,
+        "f0MeanHz": 130.1,
+        "f0StdHz": 19.6,
+        "energyDb": -12.9,
+        "jitterPct": 3.71,
+        "shimmerPct": 13.3,
+        "hnrDb": 1.8,
+        "highFreqRatio": 0.205,
+        "pauseRatio": 0.441,
+        "voicedRatio": 0.159,
+        "articulationRate": 1.55
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 48.4,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "happy",
+        "confidence": 79.8,
+        "breakdown": {
+          "happy": 79.8,
+          "neutral": 9.9,
+          "angry": 9.7,
+          "sad": 0.6
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": -1.6,
+      "strain": 0.01,
+      "driverLoad": 38.6,
+      "zScores": {
+        "f0MeanHz": -0.24,
+        "energyDb": 0.88,
+        "articulationRate": -4.0,
+        "highFreqRatio": 0.12,
+        "jitterPct": -0.08,
+        "shimmerPct": -0.1,
+        "hnrDb": -0.76,
+        "pauseRatio": -0.92
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 8 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "speech rate",
+          "z": -4.0,
+          "direction": "below"
+        },
+        {
+          "feature": "pausing",
+          "z": -0.92,
+          "direction": "below"
+        },
+        {
+          "feature": "loudness",
+          "z": 0.88,
+          "direction": "above"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513430045,
+      "lap": 27,
+      "fileName": "call_09.wav",
+      "transcript": "And we're in the window for both safety cars.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 17.2,
+        "peakLevel": 0.49,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.276,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 4.82,
+        "f0MeanHz": 108.8,
+        "f0StdHz": 19.1,
+        "energyDb": -17.9,
+        "jitterPct": 3.56,
+        "shimmerPct": 16.82,
+        "hnrDb": 1.8,
+        "highFreqRatio": 0.083,
+        "pauseRatio": 0.491,
+        "voicedRatio": 0.276,
+        "articulationRate": 3.69
+      },
+      "content": {
+        "intent": "Hazard",
+        "intentConfidence": 100.0,
+        "hazardTerms": [
+          "safety car"
+        ],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Critical"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "happy",
+        "confidence": 81.5,
+        "breakdown": {
+          "happy": 81.5,
+          "neutral": 17.7,
+          "angry": 0.6,
+          "sad": 0.2
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": -1.63,
+      "strain": 0.23,
+      "driverLoad": 40.3,
+      "zScores": {
+        "f0MeanHz": -1.84,
+        "energyDb": -1.12,
+        "articulationRate": -1.83,
+        "highFreqRatio": -0.96,
+        "jitterPct": -0.16,
+        "shimmerPct": 0.54,
+        "hnrDb": -0.76,
+        "pauseRatio": -0.45
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "High",
+        "reason": "Calibrated on 5 clips."
+      },
+      "drivers": [
+        {
+          "feature": "pitch",
+          "z": -1.84,
+          "direction": "below"
+        },
+        {
+          "feature": "speech rate",
+          "z": -1.83,
+          "direction": "below"
+        },
+        {
+          "feature": "loudness",
+          "z": -1.12,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Safety-critical traffic always goes through, whatever the driver load.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513433162,
+      "lap": 28,
+      "fileName": "call_10.wav",
+      "transcript": "This looks good, Oscar. This looks good. Let's go.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 60.0,
+        "peakLevel": 0.699,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.057,
+        "usable": false,
+        "issues": [
+          "Almost no voiced speech detected."
+        ]
+      },
+      "biomarkers": {
+        "durationSeconds": 6.89,
+        "f0MeanHz": 99.4,
+        "f0StdHz": 49.0,
+        "energyDb": -14.2,
+        "jitterPct": 10.35,
+        "shimmerPct": 24.76,
+        "hnrDb": 0.6,
+        "highFreqRatio": 0.062,
+        "pauseRatio": 0.772,
+        "voicedRatio": 0.057,
+        "articulationRate": 5.77
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 67.0,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 98.5,
+        "breakdown": {
+          "neutral": 98.5,
+          "happy": 1.2,
+          "angry": 0.2,
+          "sad": 0.0
+        }
+      },
+      "state": "Tired",
+      "description": "Effort dropping while strain stays high. Physical or mental fatigue.",
+      "arousal": -0.63,
+      "strain": 2.29,
+      "driverLoad": 65.7,
+      "zScores": {
+        "f0MeanHz": -2.54,
+        "energyDb": 0.36,
+        "articulationRate": 1.6,
+        "highFreqRatio": -1.15,
+        "jitterPct": 3.35,
+        "shimmerPct": 1.97,
+        "hnrDb": -1.59,
+        "pauseRatio": 2.18
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 37 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "pitch instability",
+          "z": 3.35,
+          "direction": "above"
+        },
+        {
+          "feature": "pitch",
+          "z": -2.54,
+          "direction": "below"
+        },
+        {
+          "feature": "pausing",
+          "z": 2.18,
+          "direction": "above"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Caution",
+        "windowReason": "Fatigue reading. Keep it short and concrete, avoid anything that needs interpretation.",
+        "wordBudget": 12,
+        "action": {
+          "headline": "Shorten everything. Consider an earlier stop.",
+          "rationale": "Fatigue is the constraint, not the tyres."
+        },
+        "flags": [
+          {
+            "level": "warning",
+            "title": "Fatigue in a long stint",
+            "detail": "Fatigue markers at lap 28 of the stint. Weigh an earlier stop against track position."
+          }
+        ]
+      },
+      "referenceDisagrees": true,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513436016,
+      "lap": 28,
+      "fileName": "call_11.wav",
+      "transcript": "It goes without saying, but clean air is king.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 17.7,
+        "peakLevel": 0.64,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.282,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 4.15,
+        "f0MeanHz": 137.9,
+        "f0StdHz": 10.2,
+        "energyDb": -14.3,
+        "jitterPct": 2.45,
+        "shimmerPct": 12.58,
+        "hnrDb": 2.0,
+        "highFreqRatio": 0.386,
+        "pauseRatio": 0.456,
+        "voicedRatio": 0.282,
+        "articulationRate": 4.02
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 97.4,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 87.9,
+        "breakdown": {
+          "neutral": 87.9,
+          "happy": 8.1,
+          "sad": 2.1,
+          "angry": 1.9
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": 0.04,
+      "strain": -0.22,
+      "driverLoad": 48.3,
+      "zScores": {
+        "f0MeanHz": 0.34,
+        "energyDb": 0.32,
+        "articulationRate": -1.28,
+        "highFreqRatio": 1.72,
+        "jitterPct": -0.73,
+        "shimmerPct": -0.23,
+        "hnrDb": -0.62,
+        "pauseRatio": -0.78
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Medium",
+        "reason": "Reading sits close to this driver's normal voice."
+      },
+      "drivers": [
+        {
+          "feature": "vocal effort",
+          "z": 1.72,
+          "direction": "above"
+        },
+        {
+          "feature": "speech rate",
+          "z": -1.28,
+          "direction": "below"
+        },
+        {
+          "feature": "pausing",
+          "z": -0.78,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513439953,
+      "lap": 28,
+      "fileName": "call_12.wav",
+      "transcript": "Last lap was purple. It goes without saying, but clean air is king.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 60.0,
+        "peakLevel": 0.576,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.172,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 8.71,
+        "f0MeanHz": 137.9,
+        "f0StdHz": 18.4,
+        "energyDb": -15.5,
+        "jitterPct": 3.26,
+        "shimmerPct": 12.28,
+        "hnrDb": 2.2,
+        "highFreqRatio": 0.313,
+        "pauseRatio": 0.704,
+        "voicedRatio": 0.172,
+        "articulationRate": 5.06
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 80.9,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 99.0,
+        "breakdown": {
+          "neutral": 99.0,
+          "happy": 0.8,
+          "angry": 0.2,
+          "sad": 0.0
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": 0.54,
+      "strain": 0.24,
+      "driverLoad": 56.0,
+      "zScores": {
+        "f0MeanHz": 0.34,
+        "energyDb": -0.16,
+        "articulationRate": 0.43,
+        "highFreqRatio": 1.07,
+        "jitterPct": -0.32,
+        "shimmerPct": -0.28,
+        "hnrDb": -0.48,
+        "pauseRatio": 1.54
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 37 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "pausing",
+          "z": 1.54,
+          "direction": "above"
+        },
+        {
+          "feature": "vocal effort",
+          "z": 1.07,
+          "direction": "above"
+        },
+        {
+          "feature": "voice clarity",
+          "z": -0.48,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513443648,
+      "lap": 29,
+      "fileName": "call_13.wav",
+      "transcript": "Good to keep pushing. Just watch that turn nine.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 33.5,
+        "peakLevel": 0.368,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.289,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 3.14,
+        "f0MeanHz": 125.0,
+        "f0StdHz": 30.9,
+        "energyDb": -17.7,
+        "jitterPct": 6.31,
+        "shimmerPct": 18.03,
+        "hnrDb": 2.8,
+        "highFreqRatio": 0.151,
+        "pauseRatio": 0.511,
+        "voicedRatio": 0.289,
+        "articulationRate": 5.92
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 50.7,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 97.3,
+        "breakdown": {
+          "neutral": 97.3,
+          "angry": 1.5,
+          "happy": 1.2,
+          "sad": 0.0
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": 0.39,
+      "strain": 0.53,
+      "driverLoad": 57.4,
+      "zScores": {
+        "f0MeanHz": -0.62,
+        "energyDb": -1.04,
+        "articulationRate": 1.84,
+        "highFreqRatio": -0.36,
+        "jitterPct": 1.26,
+        "shimmerPct": 0.75,
+        "hnrDb": -0.07,
+        "pauseRatio": -0.26
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 11 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "speech rate",
+          "z": 1.84,
+          "direction": "above"
+        },
+        {
+          "feature": "pitch instability",
+          "z": 1.26,
+          "direction": "above"
+        },
+        {
+          "feature": "loudness",
+          "z": -1.04,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513446623,
+      "lap": 29,
+      "fileName": "call_14.wav",
+      "transcript": "We'll see you on to medium. Stop and we'll go onto medium.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 17.8,
+        "peakLevel": 0.613,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.317,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 4.9,
+        "f0MeanHz": 133.3,
+        "f0StdHz": 14.9,
+        "energyDb": -14.8,
+        "jitterPct": 2.84,
+        "shimmerPct": 13.15,
+        "hnrDb": 2.4,
+        "highFreqRatio": 0.21,
+        "pauseRatio": 0.492,
+        "voicedRatio": 0.317,
+        "articulationRate": 4.86
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 85.1,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 59.9,
+        "breakdown": {
+          "neutral": 59.9,
+          "happy": 30.2,
+          "angry": 9.1,
+          "sad": 0.8
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": 0.08,
+      "strain": -0.16,
+      "driverLoad": 49.1,
+      "zScores": {
+        "f0MeanHz": 0.0,
+        "energyDb": 0.12,
+        "articulationRate": 0.1,
+        "highFreqRatio": 0.16,
+        "jitterPct": -0.53,
+        "shimmerPct": -0.13,
+        "hnrDb": -0.34,
+        "pauseRatio": -0.44
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Medium",
+        "reason": "Reading sits close to this driver's normal voice."
+      },
+      "drivers": [
+        {
+          "feature": "pitch instability",
+          "z": -0.53,
+          "direction": "below"
+        },
+        {
+          "feature": "pausing",
+          "z": -0.44,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513448968,
+      "lap": 29,
+      "fileName": "call_15.wav",
+      "transcript": "How's the front wing? Good.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 60.0,
+        "peakLevel": 0.582,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.119,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 3.58,
+        "f0MeanHz": 134.5,
+        "f0StdHz": 28.3,
+        "energyDb": -13.3,
+        "jitterPct": 2.7,
+        "shimmerPct": 16.8,
+        "hnrDb": 2.6,
+        "highFreqRatio": 0.112,
+        "pauseRatio": 0.757,
+        "voicedRatio": 0.119,
+        "articulationRate": 5.81
+      },
+      "content": {
+        "intent": "Information request",
+        "intentConfidence": 71.1,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 99.0,
+        "breakdown": {
+          "neutral": 99.0,
+          "happy": 0.6,
+          "angry": 0.4,
+          "sad": 0.0
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": 0.51,
+      "strain": 0.37,
+      "driverLoad": 57.0,
+      "zScores": {
+        "f0MeanHz": 0.09,
+        "energyDb": 0.72,
+        "articulationRate": 1.66,
+        "highFreqRatio": -0.71,
+        "jitterPct": -0.6,
+        "shimmerPct": 0.53,
+        "hnrDb": -0.21,
+        "pauseRatio": 2.04
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 37 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "pausing",
+          "z": 2.04,
+          "direction": "above"
+        },
+        {
+          "feature": "speech rate",
+          "z": 1.66,
+          "direction": "above"
+        },
+        {
+          "feature": "loudness",
+          "z": 0.72,
+          "direction": "above"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513452835,
+      "lap": 40,
+      "fileName": "call_16.wav",
+      "transcript": "That's a good lap, Oscar. Hamilton's catching Russell ahead. There's going to be action ahead. We want to be there.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 60.0,
+        "peakLevel": 0.556,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.165,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 8.02,
+        "f0MeanHz": 104.6,
+        "f0StdHz": 39.3,
+        "energyDb": -16.7,
+        "jitterPct": 4.85,
+        "shimmerPct": 19.6,
+        "hnrDb": 1.2,
+        "highFreqRatio": 0.119,
+        "pauseRatio": 0.618,
+        "voicedRatio": 0.165,
+        "articulationRate": 6.56
+      },
+      "content": {
+        "intent": "Acknowledgement",
+        "intentConfidence": 45.2,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "neutral",
+        "confidence": 94.3,
+        "breakdown": {
+          "neutral": 94.3,
+          "happy": 5.7,
+          "angry": 0.0,
+          "sad": 0.0
+        }
+      },
+      "state": "Tired",
+      "description": "Effort dropping while strain stays high. Physical or mental fatigue.",
+      "arousal": 0.13,
+      "strain": 0.87,
+      "driverLoad": 58.7,
+      "zScores": {
+        "f0MeanHz": -2.15,
+        "energyDb": -0.64,
+        "articulationRate": 2.89,
+        "highFreqRatio": -0.65,
+        "jitterPct": 0.51,
+        "shimmerPct": 1.04,
+        "hnrDb": -1.17,
+        "pauseRatio": 0.74
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "Low",
+        "reason": "This clip's signal-to-noise ratio differs from the baseline by 37 dB. Voice-instability measures move with recording quality, so the strain reading is comparing conditions as much as the driver."
+      },
+      "drivers": [
+        {
+          "feature": "speech rate",
+          "z": 2.89,
+          "direction": "above"
+        },
+        {
+          "feature": "pitch",
+          "z": -2.15,
+          "direction": "below"
+        },
+        {
+          "feature": "voice clarity",
+          "z": -1.17,
+          "direction": "below"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Caution",
+        "windowReason": "Fatigue reading. Keep it short and concrete, avoid anything that needs interpretation.",
+        "wordBudget": 12,
+        "action": {
+          "headline": "Shorten everything. Consider an earlier stop.",
+          "rationale": "Fatigue is the constraint, not the tyres."
+        },
+        "flags": [
+          {
+            "level": "warning",
+            "title": "Fatigue in a long stint",
+            "detail": "Fatigue markers at lap 40 of the stint. Weigh an earlier stop against track position."
+          }
+        ]
+      },
+      "referenceDisagrees": true,
+      "hasAudio": true
+    },
+    {
+      "id": 1786513465400,
+      "lap": 44,
+      "fileName": "call_17.wav",
+      "transcript": "Well done mate, P3. Yep, well done guys. Well, that was an impressive risk from Russell, but well done, sorry about the stop. The pace was good and clean air, just didn't quite have enough, but thank you very much. Very good day and another trophy, some good points, so thank you. Nice way to go into the break. Yep, we'll keep trucking and we know there's good things to come.",
+      "asr": {
+        "model": "openai/whisper-small.en",
+        "degenerate": false
+      },
+      "quality": {
+        "snrDb": 26.7,
+        "peakLevel": 0.652,
+        "clippedRatio": 0.0,
+        "voicedRatio": 0.334,
+        "usable": true,
+        "issues": []
+      },
+      "biomarkers": {
+        "durationSeconds": 34.34,
+        "f0MeanHz": 129.6,
+        "f0StdHz": 28.7,
+        "energyDb": -13.7,
+        "jitterPct": 2.27,
+        "shimmerPct": 12.76,
+        "hnrDb": 4.0,
+        "highFreqRatio": 0.171,
+        "pauseRatio": 0.606,
+        "voicedRatio": 0.334,
+        "articulationRate": 5.25
+      },
+      "content": {
+        "intent": "Hazard",
+        "intentConfidence": 25.2,
+        "hazardTerms": [],
+        "downplaying": false,
+        "selfReportedLimit": false,
+        "priority": "Informational"
+      },
+      "reference": {
+        "model": "superb/wav2vec2-base-superb-er",
+        "state": "Calm",
+        "rawLabel": "happy",
+        "confidence": 68.9,
+        "breakdown": {
+          "happy": 68.9,
+          "sad": 30.2,
+          "neutral": 0.8,
+          "angry": 0.0
+        }
+      },
+      "state": "Calm",
+      "description": "Close to this driver's normal voice. Spare capacity available.",
+      "arousal": 0.13,
+      "strain": -0.4,
+      "driverLoad": 47.5,
+      "zScores": {
+        "f0MeanHz": -0.28,
+        "energyDb": 0.56,
+        "articulationRate": 0.74,
+        "highFreqRatio": -0.19,
+        "jitterPct": -0.83,
+        "shimmerPct": -0.2,
+        "hnrDb": 0.76,
+        "pauseRatio": 0.63
+      },
+      "calibrated": true,
+      "confidence": {
+        "level": "High",
+        "reason": "Calibrated on 5 clips."
+      },
+      "drivers": [
+        {
+          "feature": "pitch instability",
+          "z": -0.83,
+          "direction": "below"
+        },
+        {
+          "feature": "voice clarity",
+          "z": 0.76,
+          "direction": "above"
+        },
+        {
+          "feature": "speech rate",
+          "z": 0.74,
+          "direction": "above"
+        }
+      ],
+      "recommendation": {
+        "radioWindow": "Open",
+        "windowReason": "Driver has spare capacity. Good window for a full strategy briefing.",
+        "wordBudget": 26,
+        "action": {
+          "headline": "Normal comms. Use this window for anything complex.",
+          "rationale": "This is the cheapest moment in the stint to talk."
+        },
+        "flags": []
+      },
+      "referenceDisagrees": false,
+      "hasAudio": true
+    }
+  ],
+  "baselineSamples": [
+    {
+      "durationSeconds": 6.5,
+      "f0MeanHz": 94.1,
+      "f0StdHz": 56.4,
+      "energyDb": -17.4,
+      "jitterPct": 5.21,
+      "shimmerPct": 13.55,
+      "hnrDb": 0.7,
+      "highFreqRatio": 0.192,
+      "pauseRatio": 0.539,
+      "voicedRatio": 0.24,
+      "articulationRate": 6.71,
+      "snrDb": 22.7
+    },
+    {
+      "durationSeconds": 6.6,
+      "f0MeanHz": 131.1,
+      "f0StdHz": 36.5,
+      "energyDb": -14.8,
+      "jitterPct": 4.9,
+      "shimmerPct": 15.81,
+      "hnrDb": 3.6,
+      "highFreqRatio": 0.094,
+      "pauseRatio": 0.549,
+      "voicedRatio": 0.301,
+      "articulationRate": 4.39,
+      "snrDb": 60.0
+    },
+    {
+      "durationSeconds": 8.5,
+      "f0MeanHz": 145.5,
+      "f0StdHz": 17.0,
+      "energyDb": -15.1,
+      "jitterPct": 3.87,
+      "shimmerPct": 13.85,
+      "hnrDb": 2.1,
+      "highFreqRatio": 0.268,
+      "pauseRatio": 0.467,
+      "voicedRatio": 0.221,
+      "articulationRate": 4.21,
+      "snrDb": 15.9
+    },
+    {
+      "durationSeconds": 7.42,
+      "f0MeanHz": 137.9,
+      "f0StdHz": 21.2,
+      "energyDb": -15.2,
+      "jitterPct": 3.18,
+      "shimmerPct": 13.5,
+      "hnrDb": 2.9,
+      "highFreqRatio": 0.214,
+      "pauseRatio": 0.69,
+      "voicedRatio": 0.167,
+      "articulationRate": 4.8,
+      "snrDb": 60.0
+    },
+    {
+      "durationSeconds": 9.77,
+      "f0MeanHz": 133.3,
+      "f0StdHz": 28.1,
+      "energyDb": -12.8,
+      "jitterPct": 3.47,
+      "shimmerPct": 14.71,
+      "hnrDb": 4.1,
+      "highFreqRatio": 0.075,
+      "pauseRatio": 0.421,
+      "voicedRatio": 0.432,
+      "articulationRate": 5.15,
+      "snrDb": 17.2
+    }
+  ]
 }

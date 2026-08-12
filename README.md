@@ -1,3 +1,14 @@
+---
+title: PITWALL - The Silent Co-Driver
+emoji: "\U0001F3CE"
+colorFrom: red
+colorTo: gray
+sdk: docker
+app_port: 7860
+pinned: false
+license: mit
+---
+
 # PITWALL — The Silent Co-Driver
 
 **Grand Prix hackathon · Problem Statement 1 · Powered by Hugging Face**
@@ -8,6 +19,8 @@ and in how many words.
 
 Runs on **real Formula 1 team radio** paired with **real lap timing**. Every model runs locally
 on CPU; no audio leaves the machine.
+
+**Source:** https://github.com/karan68/pitwall
 
 ![PITWALL dashboard](docs/screenshots/01-dashboard.png)
 

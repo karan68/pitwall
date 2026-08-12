@@ -24,8 +24,8 @@ RUN pip install --no-cache-dir -r backend/requirements.txt \
 COPY backend/ ./backend/
 COPY --from=frontend /build/dist ./frontend/dist
 
-# Spaces mounts a writable /data; keep the model cache off the image layer.
-ENV HF_HOME=/data/huggingface \
+# /tmp is writable on a free Space; /data only exists with persistent storage.
+ENV HF_HOME=/tmp/huggingface \
     PITWALL_ASR_MODEL=openai/whisper-small.en
 
 EXPOSE 7860
